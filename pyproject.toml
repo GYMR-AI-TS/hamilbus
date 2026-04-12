@@ -1,7 +1,7 @@
 [project]
 name = "hamilbus"
 version = "0.1.0"
-description = "Add your description here"
+description = "Applying graph theory to a public transport network."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = []
