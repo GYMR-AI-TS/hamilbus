@@ -1,0 +1,110 @@
+route_id,agency_id,route_short_name,route_long_name,route_desc,route_type,route_url,route_color,route_text_color,route_sort_order
+"NAOLIBORG:Line:1","NAOLIBORG:Operator:1","1","François Mitterrand / Jamet - Beaujoire / Babinière",,0,,00a754,ffffff,1
+"NAOLIBORG:Line:1B","NAOLIBORG:Operator:1","1B","François Mitterrand - Beaujoire / Babinière",,3,,00a754,ffffff,2
+"NAOLIBORG:Line:2","NAOLIBORG:Operator:1","2","Orvault Grand Val - Gare de Pont Rousseau",,0,,e30613,ffffff,3
+"NAOLIBORG:Line:3","NAOLIBORG:Operator:1","3","Marcel Paul - Neustrie",,0,,2581c4,ffffff,5
+"NAOLIBORG:Line:3B","NAOLIBORG:Operator:1","3B","Marcel Paul - Neustrie",,3,,2581c4,ffffff,6
+"NAOLIBORG:Line:4","NAOLIBORG:Operator:1","4","Foch - Cathédrale - Porte de Vertou",,3,,ffcd1c,000000,7
+"NAOLIBORG:Line:5","NAOLIBORG:Operator:1","5","Hangar à Bananes - Gare Sud",,3,,0bbbef,ffffff,8
+"NAOLIBORG:Line:C1","NAOLIBORG:Operator:1","C1","Haluchère - Batignolles - Gare de Chantenay",,3,,0bbbef,ffffff,21
+"NAOLIBORG:Line:C2","NAOLIBORG:Operator:1","C2","Le Cardo - Gare Sud",,3,,ee7402,ffffff,22
+"NAOLIBORG:Line:C3","NAOLIBORG:Operator:1","C3","Armor - Bd de Doulon",,3,,f7a600,000000,23
+"NAOLIBORG:Line:C4","NAOLIBORG:Operator:1","C4","Les Sorinières - Greneraie",,3,,76b82a,ffffff,24
+"NAOLIBORG:Line:C6","NAOLIBORG:Operator:1","C6","Chantrerie - Grandes Ecoles - Hermeland",,3,,a877b2,ffffff,26
+"NAOLIBORG:Line:C7","NAOLIBORG:Operator:1","C7","Trianon / Clairais - Souillarderie",,3,,c8d300,000000,27
+"NAOLIBORG:Line:C8","NAOLIBORG:Operator:1","C8","Marcel Paul - Saupin",,3,,c8d300,000000,28
+"NAOLIBORG:Line:C9","NAOLIBORG:Operator:1","C9","Basse-Goulaine / Chalonges - Pirmil",,3,,f5b5d3,000000,29
+"NAOLIBORG:Line:C20","NAOLIBORG:Operator:1","C20","Ecole Centrale - Audencia - Gare Maritime",,3,,ffed00,000000,40
+"NAOLIBORG:Line:10","NAOLIBORG:Operator:1","10","Gare de Chantenay - Bd de Doulon",,3,,ffed00,000000,50
+"NAOLIBORG:Line:11","NAOLIBORG:Operator:1","11","Tertre - Perray",,3,,e8b975,000000,51
+"NAOLIBORG:Line:12","NAOLIBORG:Operator:1","12","Jules Verne - Beauséjour",,3,,a1daf8,000000,52
+"NAOLIBORG:Line:23","NAOLIBORG:Operator:1","23","Haluchère - Batignolles - Mendès France - Bellevue",,3,,0bbbef,ffffff,63
+"NAOLIBORG:Line:26","NAOLIBORG:Operator:1","26","Jonelière - Hôtel de Région",,3,,009640,ffffff,66
+"NAOLIBORG:Line:27","NAOLIBORG:Operator:1","27","La Herdrie - Pirmil",,3,,a1daf8,000000,67
+"NAOLIBORG:Line:28","NAOLIBORG:Operator:1","28","Vertou - Pirmil",,3,,a1daf8,000000,68
+"NAOLIBORG:Line:30","NAOLIBORG:Operator:1","30","Joliverie / Iles de Loire - Trentemoult",,3,,ffed00,000000,70
+"NAOLIBORG:Line:33","NAOLIBORG:Operator:1","33","Robinière / L'Aufrère - Espace Diderot",,3,,f5b5d3,000000,73
+"NAOLIBORG:Line:36","NAOLIBORG:Operator:1","36","Greneraie - Croix Jeannette",,3,,65c2c4,ffffff,76
+"NAOLIBORG:Line:38","NAOLIBORG:Operator:1","38","Greneraie - Aéroport",,3,,009640,ffffff,78
+"NAOLIBORG:Line:40","NAOLIBORG:Operator:1","40","Mendès France - Bellevue - Neustrie",,3,,ffed00,000000,80
+"NAOLIBORG:Line:42","NAOLIBORG:Operator:1","42","Vertou - Pirmil",,3,,c8d300,000000,82
+"NAOLIBORG:Line:47","NAOLIBORG:Operator:1","47","Pégers / Grande Noëlle - Vertou",,3,,bca3ce,ffffff,87
+"NAOLIBORG:Line:50","NAOLIBORG:Operator:1","50","Basse-Indre - Porte de La Chapelle",,3,,ffed00,000000,90
+"NAOLIBORG:Line:59","NAOLIBORG:Operator:1","59","Mendès France - Bellevue - Bout des Landes",,3,,f5b5d3,000000,99
+"NAOLIBORG:Line:60","NAOLIBORG:Operator:1","60","Quintaine - Vertou",,3,,ffed00,000000,100
+"NAOLIBORG:Line:66","NAOLIBORG:Operator:1","66","Babinière - Ecole Centrale - Audencia",,3,,2581c4,ffffff,106
+"NAOLIBORG:Line:67","NAOLIBORG:Operator:1","67","Le Cellier - Centre de Thouaré",,3,,2581c4,ffffff,107
+"NAOLIBORG:Line:69","NAOLIBORG:Operator:1","69","Sautron - Orvault Morlière",,3,,d39e46,ffffff,109
+"NAOLIBORG:Line:71","NAOLIBORG:Operator:1","71","Bac de Couëron - François Mitterrand",,3,,c8d300,000000,111
+"NAOLIBORG:Line:75","NAOLIBORG:Operator:1","75","Charbonneau - Facultés",,3,,e8b975,000000,115
+"NAOLIBORG:Line:77","NAOLIBORG:Operator:1","77","Sables d'Or - Haluchère - Batignolles",,3,,a1daf8,000000,117
+"NAOLIBORG:Line:78","NAOLIBORG:Operator:1","78","Bac du Pellerin - Neustrie",,3,,f7a600,000000,118
+"NAOLIBORG:Line:79","NAOLIBORG:Operator:1","79","Orvault - Beauséjour",,3,,f5b5d3,000000,119
+"NAOLIBORG:Line:80","NAOLIBORG:Operator:1","80","Chassay / Bellevue - Fac de Droit",,3,,ffed00,000000,120
+"NAOLIBORG:Line:81","NAOLIBORG:Operator:1","81","Mendès France - Bellevue - Gare Maritime",,3,,65c2c4,ffffff,121
+"NAOLIBORG:Line:85","NAOLIBORG:Operator:1","85","Souchais - Haluchère - Batignolles",,3,,f5b5d3,000000,125
+"NAOLIBORG:Line:86","NAOLIBORG:Operator:1","86","La Chapelle Aulnay - Bout des Pavés",,3,,0bbbef,ffffff,126
+"NAOLIBORG:Line:87","NAOLIBORG:Operator:1","87","Le Halleray - Toutes Aides",,3,,f7a600,000000,127
+"NAOLIBORG:Line:88","NAOLIBORG:Operator:1","88","Château d'Aux - Neustrie",,3,,a877b2,ffffff,128
+"NAOLIBORG:Line:89","NAOLIBORG:Operator:1","89","Le Cardo - Beauséjour",,3,,76b82a,ffffff,129
+"NAOLIBORG:Line:91","NAOLIBORG:Operator:1","91","Couëron Bougon - Mendès France - Bellevue",,3,,009640,ffffff,131
+"NAOLIBORG:Line:93","NAOLIBORG:Operator:1","93","Hôpital Laënnec - Hauts de Couëron",,3,,65c2c4,ffffff,133
+"NAOLIBORG:Line:95","NAOLIBORG:Operator:1","95","Bois St-Lys - Haluchère - Batignolles",,3,,c8d300,000000,135
+"NAOLIBORG:Line:96","NAOLIBORG:Operator:1","96","Coutancière - Bout des Pavés",,3,,f7a600,000000,136
+"NAOLIBORG:Line:97","NAOLIBORG:Operator:1","97","Vertou - Trentemoult",,3,,bca3ce,ffffff,137
+"NAOLIBORG:Line:98","NAOLIBORG:Operator:1","98","St-Léger-les-Vignes / Brains - Neustrie",,3,,f7a600,000000,138
+"NAOLIBORG:Line:E1","NAOLIBORG:Operator:1","E1","Couëron Océan - Gare Maritime",,3,,e30613,ffffff,151
+"NAOLIBORG:Line:E4","NAOLIBORG:Operator:1","E4","Porte de Vertou - Vertou",,3,,e30613,ffffff,154
+"NAOLIBORG:Line:E5","NAOLIBORG:Operator:1","E5","Carquefou - Fac de Droit",,3,,e30613,ffffff,155
+"NAOLIBORG:Line:E8","NAOLIBORG:Operator:1","E8","La Cochère - Greneraie",,3,,e30613,ffffff,158
+"NAOLIBORG:Line:NA","NAOLIBORG:Operator:1","NA","Aéroport - Hôtel Dieu",,3,,a1daf8,000000,160
+"NAOLIBORG:Line:TE1","NAOLIBORG:Operator:1","TE1","Greneraie - Allende",,3,,502391,ffffff,161
+"NAOLIBORG:Line:TE2","NAOLIBORG:Operator:1","TE2","Bac d'Indret - Château d'Aux",,3,,2581c4,ffffff,162
+"NAOLIBORG:Line:N1","NAOLIBORG:Operator:1","N1","Trentemoult Sablières - Gare Maritime",,4,,2aaab6,ffffff,171
+"NAOLIBORG:Line:N2","NAOLIBORG:Operator:1","N2","Trentemoult Sablières - Hangar à Bananes",,4,,2aaab6,ffffff,172
+"NAOLIBORG:Line:N3","NAOLIBORG:Operator:1","N3","Port Boyer Navibus - Petit Port-Facultés",,4,,2aaab6,ffffff,173
+"NAOLIBORG:Line:NGG","NAOLIBORG:Operator:1","NGG","Gachet - Grimaudière",,4,,2581c4,ffffff,181
+"NAOLIBORG:Line:NC","NAOLIBORG:Operator:1","NC","Chantrerie Grandes Ecoles - Ligne de nuit Chantrerie",,3,,ffffff,232c77,191
+"NAOLIBORG:Line:NN","NAOLIBORG:Operator:1","NN","Porte de la Chapelle - Hangar à Bananes",,3,,f91aff,ffffff,192
+"NAOLIBORG:Line:NO","NAOLIBORG:Operator:1","NO","Beauséjour - Hangar à Bananes",,3,,fffa3e,232c77,193
+"NAOLIBORG:Line:NS","NAOLIBORG:Operator:1","NS","Bourdonnières - Hangar à Bananes",,3,,00ffc2,232c77,194
+"NAOLIBORG:Line:LCE","NAOLIBORG:Operator:1","LCE","Cotalard - Léo Lagrange",,3,,00a754,ffffff,197
+"NAOLIBORG:Line:LCN","NAOLIBORG:Operator:1","LCN","Léo Lagrange - Pont Pilet",,3,,e30613,ffffff,198
+"NAOLIBORG:Line:LCO","NAOLIBORG:Operator:1","LCO","René Cassin - Léo Lagrange",,3,,2581c4,ffffff,199
+"NAOLIBORG:Line:101","NAOLIBORG:Operator:1","101","Mairie de Couëron - Sinière",,3,,a9162e,ffffff,301
+"NAOLIBORG:Line:102","NAOLIBORG:Operator:1","102","Chalonges - René Bernier",,3,,a9162e,ffffff,302
+"NAOLIBORG:Line:104","NAOLIBORG:Operator:1","104","Les Sorinières - Petite Lande",,3,,a9162e,ffffff,304
+"NAOLIBORG:Line:105","NAOLIBORG:Operator:1","105","Collège Sainte Anne - Centre de Thouaré",,3,,a9162e,ffffff,305
+"NAOLIBORG:Line:107","NAOLIBORG:Operator:1","107","Bournière - Reinetière",,3,,a9162e,ffffff,307
+"NAOLIBORG:Line:108","NAOLIBORG:Operator:1","108","Saint-Hermeland - Saint-Léger-les-Vignes",,3,,a9162e,ffffff,308
+"NAOLIBORG:Line:109","NAOLIBORG:Operator:1","109","Ferrière - Couchant",,3,,a9162e,ffffff,309
+"NAOLIBORG:Line:111","NAOLIBORG:Operator:1","111","ADAPEI à Tillay - Lycée Appert",,3,,a9162e,ffffff,311
+"NAOLIBORG:Line:112","NAOLIBORG:Operator:1","112","St Blaise - Savarières",,3,,a9162e,ffffff,312
+"NAOLIBORG:Line:115","NAOLIBORG:Operator:1","115","Lycée Carquefou - Beaujoire",,3,,a9162e,ffffff,315
+"NAOLIBORG:Line:117","NAOLIBORG:Operator:1","117","Le Halleray - Reinetière",,3,,a9162e,ffffff,317
+"NAOLIBORG:Line:118","NAOLIBORG:Operator:1","118","Pirmil - St-Léger-les-Vignes",,3,,a9162e,ffffff,318
+"NAOLIBORG:Line:119","NAOLIBORG:Operator:1","119","Mairie d'Orvault - Angevinière",,3,,a9162e,ffffff,319
+"NAOLIBORG:Line:122","NAOLIBORG:Operator:1","122","Savarières - St Blaise",,3,,a9162e,ffffff,322
+"NAOLIBORG:Line:127","NAOLIBORG:Operator:1","127","Colinière - Monteverdi",,3,,a9162e,ffffff,327
+"NAOLIBORG:Line:128","NAOLIBORG:Operator:1","128","Pé de Buzay - Lycée d'Orbigny",,3,,a9162e,ffffff,328
+"NAOLIBORG:Line:129","NAOLIBORG:Operator:1","129","Les Anges - Angevinière",,3,,a9162e,ffffff,329
+"NAOLIBORG:Line:131","NAOLIBORG:Operator:1","131","Bac de Couëron - Mendès France Bellevue",,3,,a9162e,ffffff,331
+"NAOLIBORG:Line:135","NAOLIBORG:Operator:1","135","Petits Champs Blancs - Collège Sainte-Anne",,3,,a9162e,ffffff,335
+"NAOLIBORG:Line:137","NAOLIBORG:Operator:1","137","Chinon / Monteverdi - Toutes Aides",,3,,a9162e,ffffff,337
+"NAOLIBORG:Line:138","NAOLIBORG:Operator:1","138","Le Pellerin - Lycée de Bouaye",,3,,a9162e,ffffff,338
+"NAOLIBORG:Line:139","NAOLIBORG:Operator:1","139","Sautron - Angevinière",,3,,a9162e,ffffff,339
+"NAOLIBORG:Line:141","NAOLIBORG:Operator:1","141","Sainte Philomène - La Ferme",,3,,a9162e,ffffff,341
+"NAOLIBORG:Line:142","NAOLIBORG:Operator:1","142","CAT Vertonne - Porte de Vertou",,3,,a9162e,ffffff,342
+"NAOLIBORG:Line:147","NAOLIBORG:Operator:1","147","Bournière - Toutes Aides",,3,,a9162e,ffffff,347
+"NAOLIBORG:Line:149","NAOLIBORG:Operator:1","149","Cheverny - Sautron",,3,,a9162e,ffffff,349
+"NAOLIBORG:Line:152","NAOLIBORG:Operator:1","152","La Herdrie - Pirmil",,3,,a9162e,ffffff,352
+"NAOLIBORG:Line:157","NAOLIBORG:Operator:1","157","Toutes Aides - Le Halleray",,3,,a9162e,ffffff,357
+"NAOLIBORG:Line:158","NAOLIBORG:Operator:1","158","St Jean de Boisseau - Lycée de Bouaye",,3,,a9162e,ffffff,358
+"NAOLIBORG:Line:159","NAOLIBORG:Operator:1","159","Sautron - Angevinière",,3,,a9162e,ffffff,359
+"NAOLIBORG:Line:162","NAOLIBORG:Operator:1","162","La Herdrie - Pirmil",,3,,a9162e,ffffff,362
+"NAOLIBORG:Line:168","NAOLIBORG:Operator:1","168","St Jean de Boiseau - Lycée d'Orbigny",,3,,a9162e,ffffff,368
+"NAOLIBORG:Line:169","NAOLIBORG:Operator:1","169","Sautron - Thébaudières",,3,,a9162e,ffffff,369
+"NAOLIBORG:Line:172","NAOLIBORG:Operator:1","172","René Bernier - Pirmil",,3,,a9162e,ffffff,372
+"NAOLIBORG:Line:179","NAOLIBORG:Operator:1","179","Les Anges - Orvault-Morlière",,3,,a9162e,ffffff,379
+"NAOLIBORG:Line:189","NAOLIBORG:Operator:1","189","Pont Marchand - Angevinière",,3,,a9162e,ffffff,389
+"NAOLIBORG:Line:192","NAOLIBORG:Operator:1","192","Jean Monnet - Porte de Vertou",,3,,a9162e,ffffff,392
