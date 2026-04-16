@@ -13,7 +13,7 @@ dependencies = [
     "pytest>=9.0.3",
 ]
 
-develop = [
+dev = [
     "pytest",
     "black",
     "ruff"
