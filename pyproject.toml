@@ -13,7 +13,8 @@ dependencies = [
     "pytest>=9.0.3",
 ]
 
-develop = [
+[project.optional-dependencies]
+dev = [
     "pytest",
     "black",
     "ruff"
