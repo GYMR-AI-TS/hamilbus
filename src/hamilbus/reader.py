@@ -25,8 +25,8 @@ def load_stops(path: str | Path) -> dict[int, Stop]:
     """Load stops and returns them as a dict of Stop objects by ids"""
     stops = {}
     with open(path, encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
+        stops_file = csv.DictReader(f)
+        for row in stops_file:
             stop = Stop(
                 index = parse_stop_id(row["stop_id"]),
                 name = row["stop_name"],
@@ -52,8 +52,8 @@ def load_lines(routes_path: str | Path, shapes_path: str | Path) -> dict[int, Li
     lines = {}
     name_to_id = {}
     with open(routes_path, encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for num, row in enumerate(reader):
+        routes_file = csv.DictReader(f)
+        for num, row in enumerate(routes_file):
             line = Line(
                 index = num, 
                 name = row["route_short_name"],
@@ -66,8 +66,8 @@ def load_lines(routes_path: str | Path, shapes_path: str | Path) -> dict[int, Li
     # Second pass: read shapes.txt
     shape_rows: dict[int, list[tuple[int, float, float]]] = {}
     with open(shapes_path, encoding="utf-8") as f:
-        reader = csv.DictReader(f)
-        for row in reader:
+        shapes_file = csv.DictReader(f)
+        for row in shapes_file:
             line_name = parse_shape_line_name(row["shape_id"])
             line_id = name_to_id[line_name]
             shape_rows.setdefault(line_id, []).append((

@@ -11,7 +11,7 @@ class Stop:
     lat: float
     lon: float
     lines: list[int] = field(default_factory=list) 
-    parent_station: Optional[int] = None
+    parent_station_idx: Optional[int] = None
 
 @dataclass
 class Line:
