@@ -8,18 +8,16 @@ version = "0.1.0"
 description = "Applying graph theory to a public transport network."
 readme = "README.md"
 requires-python = ">=3.14"
-<<<<<<< HEAD
+
 dependencies = [
     "pytest>=9.0.3",
 ]
 
-[tool.setuptools.packages.find]
-where = ["src"]
-=======
-dependencies = []
 develop = [
     "pytest",
     "black",
     "ruff"
 ]
->>>>>>> 2e647f1 (setup: Add developpment tools for ci checks)
+
+[tool.setuptools.packages.find]
+where = ["src"]
