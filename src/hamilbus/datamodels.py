@@ -8,8 +8,8 @@ from dataclasses import dataclass, field
 class Stop:
     index: int
     name: str
-    lon: float
     lat: float
+    lon: float
     lines: list[int] = field(default_factory=list) 
     parent_station: Optional[int] = None
 
