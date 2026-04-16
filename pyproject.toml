@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "hamilbus"
 version = "0.1.0"
@@ -5,3 +9,6 @@ description = "Applying graph theory to a public transport network."
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
