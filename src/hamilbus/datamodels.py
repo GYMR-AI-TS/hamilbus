@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 class Stop:
     index: int
     name: str
+    type: str   # parent_station, substation, or centroid
     lat: float
     lon: float
     lines: list[int] = field(default_factory=list) 
@@ -20,3 +21,4 @@ class Line:
     long_name: str
     color: str
     shape: list[tuple[float, float]] = field(default_factory=list)
+    stops: list[Stop]
