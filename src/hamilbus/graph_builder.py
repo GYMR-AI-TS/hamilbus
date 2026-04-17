@@ -58,8 +58,27 @@ class GraphBuilder():
             merged_stops[idx] = centroid_stop
         return merged_stops
 
-    def order_stops(self, line):
-        pass
+
+    def order_stops(self, stops):
+        '''Populate line.stops with ordered stops for each line'''
+        grouped = defaultdict(list)
+        for stop in stops:
+            for line in stop.lines:
+                grouped[line].append(stop) # {line : [list of stops], ...}
+
+        for line, group in grouped.items():
+            shape_projected = [self.project(coords[1], coords[0]) for coords in line.shape]
+            linestring = LineString(shape_projected)
+            stop_positions = []
+            for stop in group : # Project each stop onto the line and get its position along the route
+                stop_projected = Point(self.project(stop.lon, stop.lat))
+                position = linestring.project(stop_projected, normalized=True)
+                stop_positions.append((position, stop))
+                
+            stop_positions.sort(key=lambda x: x[0]) # Sort by position along the route → this is the stop order
+            ordered_stops = [stop for _, stop in stop_positions]
+            line.stops = ordered_stops
+
 
     def build_graph(self, lines):
         pass
