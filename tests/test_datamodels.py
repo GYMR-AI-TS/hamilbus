@@ -1,7 +1,13 @@
+from pathlib import Path
 from hamilbus import reader
 
-stops = reader.load_stops(r"src\hamilbus\data\stops.txt")
-lines = reader.load_lines(r"src\hamilbus\data\routes.txt", r"src\hamilbus\data\shapes.txt")
+DATA_DIR = Path(__file__).resolve().parents[1] / "src" / "hamilbus" / "data"
+STOPS_PATH = DATA_DIR / "stops.txt"
+ROUTES_PATH = DATA_DIR / "routes.txt"
+SHAPES_PATH = DATA_DIR / "shapes.txt"
+
+stops = reader.load_stops(STOPS_PATH)
+lines = reader.load_lines(ROUTES_PATH, SHAPES_PATH)
 
 print("Number of stops : ", len(stops))
 print("Number of lines : ", len(lines))
@@ -14,9 +20,9 @@ def test_parsers():
    assert id == 1000194
 
 def test_stops_number():
-   stops = reader.load_stops(r"src\hamilbus\data\stops.txt")
+   stops = reader.load_stops(STOPS_PATH)
    assert len(stops) == 3741
 
 def test_lines_number():
-   lines = reader.load_lines(r"src\hamilbus\data\routes.txt", r"src\hamilbus\data\shapes.txt")
+   lines = reader.load_lines(ROUTES_PATH, SHAPES_PATH)
    assert len(lines) == 109
