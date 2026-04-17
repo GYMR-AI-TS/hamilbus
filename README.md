@@ -1,6 +1,14 @@
 # hamilbus
 Applying graph theory to a public transport network.
 
+## Data
+
+This project uses public transit data following the [GTFS standard](https://gtfs.org/documentation/schedule/reference/), and specifically files :
+- stops.txt : the list of stops
+- routes.txt : the list of lines
+- shapes.txt : the list of coordinates representing the "shapes" of lines
+We use Nantes (France) as an example : data can be found [here](https://data.nantesmetropole.fr/explore/dataset/244400404_transports_commun_naolib_nantes_metropole_gtfs/information/)
+
 ## Development Setup
 
 ### Installing Development Dependencies
