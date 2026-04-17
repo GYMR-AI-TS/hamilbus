@@ -4,15 +4,17 @@
 from typing import Optional
 from dataclasses import dataclass, field
 
+
 @dataclass
 class Stop:
     index: int
     name: str
-    type: str   # parent_station, substation, or centroid
+    type: str  # parent_station, substation, or centroid
     lat: float
     lon: float
-    lines: list[int] = field(default_factory=list) 
+    lines: list[int] = field(default_factory=list)
     parent_station_idx: Optional[int] = None
+
 
 @dataclass
 class Line:
