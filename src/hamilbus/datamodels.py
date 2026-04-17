@@ -1,4 +1,4 @@
-### dataclasses.py
+### datamodels.py
 ### Defines the dataclasses for storing stops and lines info
 
 from typing import Optional
