@@ -3,7 +3,7 @@
 
 import csv
 from pathlib import Path
-from datamodels import Stop, Line
+from hamilbus.datamodels import Stop, Line
 
 
 def parse_stop_id(raw: str) -> int:
@@ -30,9 +30,10 @@ def load_stops(path: str | Path) -> dict[int, Stop]:
             stop = Stop(
                 index = parse_stop_id(row["stop_id"]),
                 name = row["stop_name"],
+                type = "substation" if row.get("parent_station") else "parent_station",
                 lat = float(row["stop_lat"]),
                 lon = float(row["stop_lon"]),
-                parent_station = parse_stop_id(row["parent_station"]) if row.get("parent_station") else None,
+                parent_station_idx = parse_stop_id(row["parent_station"]) if row.get("parent_station") else None,
             )
             stops[stop.index] = stop
     return stops

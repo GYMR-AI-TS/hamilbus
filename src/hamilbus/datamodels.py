@@ -21,4 +21,4 @@ class Line:
     long_name: str
     color: str
     shape: list[tuple[float, float]] = field(default_factory=list)
-    stops: list[Stop]
+    stops: list[Stop] = field(default_factory=list)
