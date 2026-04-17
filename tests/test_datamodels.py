@@ -1,3 +1,4 @@
+from math import sqrt
 from pathlib import Path
 import hamilbus as hbus
 import networkx as nx
@@ -126,7 +127,10 @@ def test_add_edge_to_graph():
     )
     assert graph.graph.has_edge(stop1.index, stop2.index)
     assert graph.graph[stop1.index][stop2.index][0]["line"].index == 0
-    assert graph.graph[stop1.index][stop2.index][0]["distance"] is None
+    expected_distance = sqrt(
+        (stop1.lat - stop2.lat) ** 2 + (stop1.lon - stop2.lon) ** 2
+    )
+    assert graph.graph[stop1.index][stop2.index][0]["distance"] == expected_distance
 
 
 def test_get_stops_returns_all_stops():
@@ -163,10 +167,13 @@ def test_get_edges_returns_edge_attributes():
     edges = graph.get_edges()
     assert len(edges) == 1
     source, target, data = edges[0]
-    print(source, target, data)
     assert source == stop1
     assert target == stop2
     assert data["line"] == line
+    expected_distance = sqrt(
+        (stop1.lat - stop2.lat) ** 2 + (stop1.lon - stop2.lon) ** 2
+    )
+    assert data["distance"] == expected_distance
 
 
 def test_add_line_connects_stops_and_adds_nodes():
@@ -214,4 +221,7 @@ def test_fully_connected_graph_preserves_edge_data():
     assert fully_connected.has_edge(stop1.index, stop2.index)
     data = fully_connected[stop1.index][stop2.index]
     assert data["line"] == line
-    assert data["distance"] is None
+    expected_distance = sqrt(
+        (stop1.lat - stop2.lat) ** 2 + (stop1.lon - stop2.lon) ** 2
+    )
+    assert data["distance"] == expected_distance

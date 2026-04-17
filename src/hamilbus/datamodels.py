@@ -4,6 +4,7 @@
 from typing import Optional, List
 from dataclasses import dataclass, field
 import networkx as nx
+from math import sqrt
 
 
 @dataclass
@@ -40,8 +41,11 @@ class BusNetworkGraph:
     def add_edge(self, stop1: Stop, stop2: Stop, line: Line):
         """Adds an edge between two stops, with the line as an attribute."""
         self.graph.add_edge(
-            stop1.index, stop2.index, line=line, distance=None
-        )  # Add distance calculation later
+            stop1.index,
+            stop2.index,
+            line=line,
+            distance=sqrt((stop1.lat - stop2.lat) ** 2 + (stop1.lon - stop2.lon) ** 2),
+        )
 
     def add_line(self, line: Line):
         """Adds a line to the graph and connects its stops."""
