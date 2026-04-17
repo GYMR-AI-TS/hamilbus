@@ -8,8 +8,15 @@ version = "0.1.0"
 description = "Applying graph theory to a public transport network."
 readme = "README.md"
 requires-python = ">=3.14"
+
 dependencies = [
-    "pytest>=9.0.3",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "black",
+    "ruff"
 ]
 
 [tool.setuptools.packages.find]
