@@ -77,7 +77,7 @@
         stopLayer.clearLayers();
         stops.forEach(function(stop) {
           L.circleMarker([stop.lat, stop.lon], {
-            radius: 5,
+            radius: 3,
             fillColor: "black",
             color: "white",
             weight: 1,
@@ -95,8 +95,8 @@
           var coords = line.shape.map(function(p) { return [p.lat, p.lon]; });
           var layer = L.polyline(coords, {
             color: line.color || "#3388ff",
-            weight: 4,
-            opacity: 0.7,
+            weight: 2,
+            opacity: 0.9,
           }).addTo(map);
           lineLayers[line.index] = layer;
 

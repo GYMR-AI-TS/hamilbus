@@ -13,17 +13,20 @@ _STATIC_DIR = Path(__file__).parent / "static"
 
 app = FastAPI(title="Hamilbus Local Viewer")
 app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
+_network: tuple | None = None
 
+def set_network(stops, lines):
+    global _network
+    _network = (stops, lines)
 
 @app.get("/api/stops")
 def api_stops() -> JSONResponse:
-    stops, _ = _create_fake_network()  # replace with real data loading
+    stops, _ = _network
     return JSONResponse([stop_payload(stop) for stop in stops.values()])
-
 
 @app.get("/api/lines")
 def api_lines() -> JSONResponse:
-    _, lines = _create_fake_network()  # replace with real data loading
+    _, lines = _network
     return JSONResponse([line_payload(line) for line in lines.values()])
 
 
