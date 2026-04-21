@@ -4,7 +4,7 @@
 from pyproj import Transformer
 from shapely.geometry import Point, LineString
 from collections import defaultdict
-from hamilbus.datamodels import Stop, Line
+from hamilbus.datamodels import Stop, Line, BusNetworkGraph
 
 class GraphBuilder():
     """"""
@@ -81,6 +81,8 @@ class GraphBuilder():
 
 
     def build_graph(self, lines):
-        pass
+        graph = BusNetworkGraph()
+        for line in lines : 
+            graph.add_line(line)
 
 
