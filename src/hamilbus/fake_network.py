@@ -1,5 +1,5 @@
-from fastapi import FastAPI
-from .datamodels import Line, Stop, BusNetworkGraph
+from .datamodels import Line, Stop
+
 
 def _create_fake_network() -> tuple[dict[int, Stop], dict[int, Line]]:
     """Create a fake bus network for demonstration purposes."""
@@ -33,11 +33,41 @@ def _create_fake_network() -> tuple[dict[int, Stop], dict[int, Line]]:
 
     # Create fake lines
     fake_lines_data = [
-        (0, "Ligne 1", "Château de Vincennes ↔ La Défense", "#FF0000", [1000001, 1000005, 1000002, 1000006, 1000007]),
-        (1, "Ligne 2", "Porte Dauphine ↔ Nation", "#0000FF", [1000008, 1000005, 1000002, 1000006, 1000007]),
-        (2, "Ligne 3", "Pont de Levallois ↔ Gallieni", "#00FF00", [1000009, 1000008, 1000005, 1000002, 1000003]),
-        (3, "Ligne 4", "Porte de Clignancourt ↔ Mairie de Montrouge", "#FFFF00", [1000001, 1000005, 1000002, 1000004]),
-        (4, "Ligne 5", "Bobigny ↔ Place d'Italie", "#FF00FF", [1000006, 1000002, 1000003, 1000010]),
+        (
+            0,
+            "Ligne 1",
+            "Château de Vincennes ↔ La Défense",
+            "#FF0000",
+            [1000001, 1000005, 1000002, 1000006, 1000007],
+        ),
+        (
+            1,
+            "Ligne 2",
+            "Porte Dauphine ↔ Nation",
+            "#0000FF",
+            [1000008, 1000005, 1000002, 1000006, 1000007],
+        ),
+        (
+            2,
+            "Ligne 3",
+            "Pont de Levallois ↔ Gallieni",
+            "#00FF00",
+            [1000009, 1000008, 1000005, 1000002, 1000003],
+        ),
+        (
+            3,
+            "Ligne 4",
+            "Porte de Clignancourt ↔ Mairie de Montrouge",
+            "#FFFF00",
+            [1000001, 1000005, 1000002, 1000004],
+        ),
+        (
+            4,
+            "Ligne 5",
+            "Bobigny ↔ Place d'Italie",
+            "#FF00FF",
+            [1000006, 1000002, 1000003, 1000010],
+        ),
     ]
 
     for index, name, long_name, color, stop_indices in fake_lines_data:
