@@ -17,13 +17,13 @@ app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
 
 @app.get("/api/stops")
 def api_stops() -> JSONResponse:
-    stops, _ = _create_fake_network() # replace with real data loading
+    stops, _ = _create_fake_network()  # replace with real data loading
     return JSONResponse([stop_payload(stop) for stop in stops.values()])
 
 
 @app.get("/api/lines")
 def api_lines() -> JSONResponse:
-    _, lines = _create_fake_network() # replace with real data loading
+    _, lines = _create_fake_network()  # replace with real data loading
     return JSONResponse([line_payload(line) for line in lines.values()])
 
 
