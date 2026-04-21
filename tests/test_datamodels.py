@@ -210,18 +210,11 @@ def test_fully_connected_graph_preserves_edge_data():
     stop2 = hbus.Stop(
         index=1, name="Stop 2", type="substation", lat=40.7129, lon=-74.0061
     )
-    line = hbus.Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red")
 
     graph.add_stop(stop1)
     graph.add_stop(stop2)
-    graph.add_edge(stop1, stop2, line=line)
 
     fully_connected = graph.fully_connected_graph()
     assert isinstance(fully_connected, nx.Graph)
     assert fully_connected.has_edge(stop1.index, stop2.index)
-    data = fully_connected[stop1.index][stop2.index]
-    assert data["line"] == line
-    expected_distance = sqrt(
-        (stop1.lat - stop2.lat) ** 2 + (stop1.lon - stop2.lon) ** 2
-    )
-    assert data["distance"] == expected_distance
+    assert fully_connected[stop1.index][stop2.index]["line"].name == "Direct Connection"

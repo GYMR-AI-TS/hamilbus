@@ -71,13 +71,17 @@ class BusNetworkGraph:
         for stop in self.get_stops():
             fully_connected.add_node(stop.index, stop=stop)
 
-        for u, v, data in self.graph.edges(data=True):
-            stop_u = self.graph.nodes[u]["stop"]
-            stop_v = self.graph.nodes[v]["stop"]
-            line = data["line"]
-            distance = data["distance"]
-            fully_connected.add_edge(
-                stop_u.index, stop_v.index, line=line, distance=distance
-            )
+        for u in fully_connected.nodes:
+            for v in fully_connected.nodes:
+                if u != v and not fully_connected.has_edge(u, v):
+                    stop_u = self.graph.nodes[u]["stop"]
+                    stop_v = self.graph.nodes[v]["stop"]
+                    line = Line(
+                        index=-1,
+                        name="Direct Connection",
+                        long_name="Direct Connection",
+                        color="gray",
+                    )
+                    fully_connected.add_edge(stop_u.index, stop_v.index, line=line)
 
         return fully_connected
