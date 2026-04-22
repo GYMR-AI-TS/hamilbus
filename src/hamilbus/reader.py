@@ -78,14 +78,14 @@ def load_lines(routes_path: str | Path, shapes_path: str | Path) -> dict[int, Li
             shape_rows.setdefault(line_id, []).append(
                 (
                     int(row["shape_pt_sequence"]),
-                    float(row["shape_pt_lon"]),
                     float(row["shape_pt_lat"]),
+                    float(row["shape_pt_lon"]),
                 )
             )
 
     for line_id, points in shape_rows.items():
         points.sort(key=lambda p: p[0])  # sort by sequence number
         if line_id in lines:
-            lines[line_id].shape = [(lon, lat) for _, lon, lat in points]
+            lines[line_id].shape = [(lat, lon) for _, lat, lon in points]
 
     return lines
