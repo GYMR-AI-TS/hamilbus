@@ -3,8 +3,8 @@
 
 import tqdm
 from pyproj import Transformer
-from shapely.geometry import Point, LineString
 from collections import defaultdict
+from shapely.geometry import Point, LineString
 from hamilbus.datamodels import Stop, Line, BusNetworkGraph
 
 class GraphBuilder():
@@ -26,11 +26,11 @@ class GraphBuilder():
             self._line_bounds[line.index] = linestring.bounds
 
     def project(self, lon:float, lat:float):
-        '''Project (lon,lat) coordinates in meters'''
+        """Project (lon,lat) coordinates in meters"""
         return self.transformer.transform(lon, lat) # lon,lat instead of lat,lon by convention (always_xy=True)
 
     def determine_belonging(self, stop:Stop, line:Line, threshold=50) -> bool:
-        '''Determine if a stop belongs to a line by checking if it is close enough'''
+        """Determine if a stop belongs to a line by checking if it is close enough"""
         stop_projected = Point(self.project(stop.lon, stop.lat))
         line_bounds = self._line_bounds[line.index]
         minx, miny, maxx, maxy = line_bounds
@@ -40,7 +40,7 @@ class GraphBuilder():
             and miny - threshold <= stop_projected.y <= maxy + threshold
         ):
             return False
-
+        # If it does, calculate its distance to the line to determine belonging
         linestring = self._line_geometries[line.index]
         distance = stop_projected.distance(linestring)
         if distance < threshold:
@@ -85,7 +85,7 @@ class GraphBuilder():
 
 
     def order_stops(self, stops:list[Stop]):
-        '''Populate line.stops with ordered stops for each line'''
+        """Populate line.stops with ordered stops for each line"""
         grouped = defaultdict(list)
         for stop in stops:
             for line in stop.lines:
@@ -105,9 +105,11 @@ class GraphBuilder():
             line.stops = ordered_stops
 
 
-    def build_graph(self, lines:list[Line]):
+    def build_graph(self, lines:list[Line]) -> BusNetworkGraph:
+        """Builds a BusNetworkGraph object from a list of Line objects with ordered stops"""
         graph = BusNetworkGraph()
         for line in lines : 
             graph.add_line(line)
+        return graph
 
 
