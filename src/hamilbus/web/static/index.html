@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Hamilbus Network</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;height:100vh;overflow:hidden;background:#f4f4f1;display:flex}
+#sidebar{width:280px;min-width:280px;height:100vh;display:flex;flex-direction:column;background:#fff;border-right:0.5px solid rgba(0,0,0,0.12);z-index:1000}
+#sidebar-header{padding:16px 16px 12px;border-bottom:0.5px solid rgba(0,0,0,0.12)}
+.app-title{font-size:15px;font-weight:600;color:#111;letter-spacing:-0.01em}
+.app-sub{font-size:11px;color:#888;margin-top:2px}
+#sidebar-controls{padding:10px 12px;border-bottom:0.5px solid rgba(0,0,0,0.12);display:flex;align-items:center;justify-content:space-between}
+.toggle-row{display:flex;align-items:center;gap:6px;cursor:pointer}
+.toggle-row input{width:13px;height:13px;cursor:pointer;accent-color:#185FA5}
+.toggle-row span{font-size:12px;color:#555}
+.actions-row{display:flex;gap:6px}
+.btn-sm{font-size:11px;padding:3px 8px;border:0.5px solid rgba(0,0,0,0.25);border-radius:5px;background:transparent;color:#555;cursor:pointer;transition:background 0.1s}
+.btn-sm:hover{background:#f0f0ed}
+#sidebar-search{padding:8px 12px;border-bottom:0.5px solid rgba(0,0,0,0.12)}
+#search-input{width:100%;padding:5px 8px;font-size:12px;border:0.5px solid rgba(0,0,0,0.25);border-radius:6px;background:#fafafa;color:#111;outline:none;font-family:inherit}
+#search-input:focus{border-color:rgba(0,0,0,0.4);box-shadow:0 0 0 2px rgba(0,0,0,0.06)}
+#sidebar-lines{flex:1;overflow-y:auto;padding:4px 0}
+#sidebar-lines::-webkit-scrollbar{width:4px}
+#sidebar-lines::-webkit-scrollbar-track{background:transparent}
+#sidebar-lines::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:2px}
+.line-item{display:flex;align-items:center;gap:8px;padding:4px 12px;cursor:pointer;transition:background 0.1s}
+.line-item:hover{background:#f5f5f2}
+.line-item input[type=checkbox]{width:11px;height:11px;cursor:pointer;flex-shrink:0;accent-color:#185FA5}
+.line-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.line-short{font-size:11px;font-weight:600;color:#111;min-width:28px}
+.line-long{font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+#sidebar-footer{padding:8px 12px;border-top:0.5px solid rgba(0,0,0,0.12)}
+#status{font-size:11px;color:#888;line-height:1.4}
+#status.error{color:#a32d2d;font-weight:500}
+.section-head{padding:6px 12px 3px;display:flex;align-items:center;justify-content:space-between}
+.section-head span{font-size:10px;text-transform:uppercase;letter-spacing:0.06em;color:#aaa;font-weight:600}
+.line-count-badge{font-size:10px;padding:1px 6px;background:#f0f0ed;border:0.5px solid rgba(0,0,0,0.12);border-radius:10px;color:#888}
+#map-wrap{flex:1;position:relative}
+#map{position:absolute;inset:0}
+</style>
+</head>
+<body>
+<div id="sidebar">
+  <div id="sidebar-header">
+    <div class="app-title">Hamilbus Network</div>
+    <div class="app-sub">Visualiseur de réseau GTFS</div>
+  </div>
+  <div id="sidebar-controls">
+    <label class="toggle-row">
+      <input id="toggle-stops" type="checkbox" checked/>
+      <span>Afficher les arrêts</span>
+    </label>
+    <div class="actions-row">
+      <button class="btn-sm" id="btn-all">Tout</button>
+      <button class="btn-sm" id="btn-none">Aucun</button>
+    </div>
+  </div>
+  <div id="sidebar-search">
+    <input id="search-input" type="text" placeholder="Filtrer les lignes…"/>
+  </div>
+  <div id="sidebar-lines">
+    <div class="section-head">
+      <span>Lignes</span>
+      <span class="line-count-badge" id="line-count">—</span>
+    </div>
+    <div id="line-list"></div>
+  </div>
+  <div id="sidebar-footer">
+    <div id="status">Chargement des données…</div>
+  </div>
+</div>
+<div id="map-wrap">
+  <div id="map"></div>
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+  const map = L.map("map", { zoomControl: false }).setView([48.8566, 2.3522], 12);
+  L.control.zoom({ position: "bottomright" }).addTo(map);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "© OpenStreetMap contributors",
+  }).addTo(map);
+
+  const stopLayer = L.layerGroup().addTo(map);
+  const lineLayers = {};
+  const lineItems = [];
+  const statusEl = document.getElementById("status");
+  const lineList = document.getElementById("line-list");
+  const lineCountEl = document.getElementById("line-count");
+
+  function setStatus(msg, isErr) {
+    statusEl.textContent = msg;
+    statusEl.className = isErr ? "error" : "";
+  }
+
+  function drawStops(stops) {
+    stopLayer.clearLayers();
+    stops.forEach(function(s) {
+      L.circleMarker([s.lat, s.lon], {
+        radius: 2.5,
+        fillColor: "#222",
+        color: "#fff",
+        weight: 1,
+        fillOpacity: 0.85,
+      })
+        .bindPopup("<strong style='font-size:12px'>" + s.name + "</strong><br/><span style='font-size:11px;color:#888'>" + s.type + "</span>")
+        .addTo(stopLayer);
+    });
+  }
+
+  function drawLines(lines) {
+    lineList.innerHTML = "";
+    lineItems.length = 0;
+    lines.forEach(function(line) {
+      if (!line.shape || line.shape.length < 2) return;
+      var coords = line.shape.map(function(p) { return [p.lat, p.lon]; });
+      var color = line.color || "#3388ff";
+      var layer = L.polyline(coords, { color: color, weight: 2.5, opacity: 0.85 }).addTo(map);
+      lineLayers[line.index] = layer;
+
+      var wrap = document.createElement("div");
+      wrap.className = "line-item";
+
+      var cb = document.createElement("input");
+      cb.type = "checkbox";
+      cb.checked = true;
+      cb.addEventListener("change", function() {
+        cb.checked ? layer.addTo(map) : map.removeLayer(layer);
+      });
+
+      var dot = document.createElement("span");
+      dot.className = "line-dot";
+      dot.style.background = color;
+
+      var short = document.createElement("span");
+      short.className = "line-short";
+      short.textContent = line.name || "—";
+
+      var long = document.createElement("span");
+      long.className = "line-long";
+      long.textContent = line.long_name || "";
+      long.title = line.long_name || "";
+
+      wrap.appendChild(cb);
+      wrap.appendChild(dot);
+      wrap.appendChild(short);
+      wrap.appendChild(long);
+      lineList.appendChild(wrap);
+
+      lineItems.push({ el: wrap, cb: cb, layer: layer, name: (line.name || "") + " " + (line.long_name || "") });
+    });
+    lineCountEl.textContent = lineItems.length;
+  }
+
+  function fitMap(stops, lines) {
+    var pts = [];
+    stops.forEach(function(s) { pts.push([s.lat, s.lon]); });
+    lines.forEach(function(l) { if (l.shape) l.shape.forEach(function(p) { pts.push([p.lat, p.lon]); }); });
+    if (pts.length) map.fitBounds(pts, { padding: [24, 24] });
+  }
+
+  document.getElementById("toggle-stops").addEventListener("change", function(e) {
+    e.target.checked ? stopLayer.addTo(map) : map.removeLayer(stopLayer);
+  });
+
+  document.getElementById("btn-all").addEventListener("click", function() {
+    lineItems.forEach(function(item) { item.cb.checked = true; item.layer.addTo(map); });
+  });
+
+  document.getElementById("btn-none").addEventListener("click", function() {
+    lineItems.forEach(function(item) { item.cb.checked = false; map.removeLayer(item.layer); });
+  });
+
+  document.getElementById("search-input").addEventListener("input", function(e) {
+    var q = e.target.value.toLowerCase();
+    lineItems.forEach(function(item) {
+      item.el.style.display = item.name.toLowerCase().includes(q) ? "" : "none";
+    });
+    var visible = lineItems.filter(function(i) { return i.el.style.display !== "none"; }).length;
+    lineCountEl.textContent = q ? visible + "/" + lineItems.length : lineItems.length;
+  });
+
+  async function loadData() {
+    try {
+      const [sr, lr] = await Promise.all([fetch("/api/stops"), fetch("/api/lines")]);
+      if (!sr.ok) { setStatus("Erreur stops : HTTP " + sr.status, true); return; }
+      if (!lr.ok) { setStatus("Erreur lignes : HTTP " + lr.status, true); return; }
+      const stops = await sr.json();
+      const lines = await lr.json();
+      if (!stops.length && !lines.length) { setStatus("Aucune donnée disponible."); return; }
+      drawStops(stops);
+      drawLines(lines);
+      fitMap(stops, lines);
+      setStatus(stops.length + " arrêts · " + lines.length + " lignes");
+    } catch (e) {
+      setStatus("Erreur réseau : " + e.message, true);
+    }
+  }
+
+  loadData();
+</script>
+</body>
+</html>

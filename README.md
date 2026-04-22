@@ -19,6 +19,15 @@ Install the package with development dependencies:
 pip install -e ".[dev]"
 ```
 
+## How to run
+
+```bash
+cd hamilbus
+python -m hamilbus.main
+```
+
+Then open http://127.0.0.1:3000
+
 ### Development Tools
 
 This project uses the following tools for code quality and testing:
