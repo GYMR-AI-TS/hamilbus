@@ -15,6 +15,7 @@ def main() -> None:
 from hamilbus.graph_builder import GraphBuilder
 from hamilbus.reader import *
 
+
 def main():
     DATA_DIR = Path(__file__).resolve().parents[1] / "hamilbus" / "data"
     STOPS_PATH = DATA_DIR / "stops.txt"
@@ -28,6 +29,7 @@ def main():
     builder.stops = builder.merge_stops_by_name()
     builder.order_stops()
     graph = builder.build_graph()
+
 
 if __name__ == "__main__":
     main()
