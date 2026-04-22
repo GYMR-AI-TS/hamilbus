@@ -8,7 +8,7 @@ from shapely.geometry import Point, LineString
 from hamilbus.datamodels import Stop, Line, BusNetworkGraph
 
 class GraphBuilder():
-    """"""
+    """Class to handle the operations to build to a graph from Stop and Line objects lists"""
     def __init__(self, stops:list[Stop], lines:list[Line]):
         self.stops = stops
         self.lines = lines
@@ -40,7 +40,7 @@ class GraphBuilder():
             and miny - threshold <= stop_projected.y <= maxy + threshold
         ):
             return False
-        # If it does, calculate its distance to the line to determine belonging
+        # Only if it does, calculate its distance to the line to determine belonging
         linestring = self._line_geometries[line.index]
         distance = stop_projected.distance(linestring)
         if distance < threshold:
@@ -57,8 +57,10 @@ class GraphBuilder():
                 self.determine_belonging(stop, line, threshold=threshold)
 
 
-    def merge_stops_by_name(self, stops:list[Stop]) -> list[Stop]:
+    def merge_stops_by_name(self, stops:list[Stop] = None) -> list[Stop]:
         """Merge stops sharing the same name using centroid coordinates."""
+        if stops == None : 
+            stops = self.stops
         grouped = defaultdict(list)
         for stop in stops:
             grouped[stop.name].append(stop) # {"stopName" : [all stops with that name], ...}
@@ -84,8 +86,10 @@ class GraphBuilder():
         return merged_stops
 
 
-    def order_stops(self, stops:list[Stop]):
-        """Populate line.stops with ordered stops for each line"""
+    def order_stops(self, stops:list[Stop] = None):
+        """Populate line.stops with ordered stops for all lines associated to a stop"""
+        if stops == None : 
+            stops = self.stops
         grouped = defaultdict(list)
         for stop in stops:
             for line in stop.lines:
@@ -105,8 +109,10 @@ class GraphBuilder():
             line.stops = ordered_stops
 
 
-    def build_graph(self, lines:list[Line]) -> BusNetworkGraph:
+    def build_graph(self, lines:list[Line] = None) -> BusNetworkGraph:
         """Builds a BusNetworkGraph object from a list of Line objects with ordered stops"""
+        if lines == None : 
+            lines = self.lines
         graph = BusNetworkGraph()
         for line in lines : 
             graph.add_line(line)
