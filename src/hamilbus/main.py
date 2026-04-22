@@ -12,7 +12,22 @@ def main() -> None:
     set_network(stops, lines)
 
     run_server(host="127.0.0.1", port=3000)
+from hamilbus.graph_builder import GraphBuilder
+from hamilbus.reader import *
 
+def main():
+    DATA_DIR = Path(__file__).resolve().parents[1] / "hamilbus" / "data"
+    STOPS_PATH = DATA_DIR / "stops.txt"
+    ROUTES_PATH = DATA_DIR / "routes.txt"
+    SHAPES_PATH = DATA_DIR / "shapes.txt"
+    stops = load_stops(STOPS_PATH)
+    lines = load_lines(ROUTES_PATH, SHAPES_PATH)
+
+    builder = GraphBuilder(stops, lines)
+    builder.assign_stops_to_lines()
+    builder.stops = builder.merge_stops_by_name()
+    builder.order_stops()
+    graph = builder.build_graph()
 
 if __name__ == "__main__":
     main()
