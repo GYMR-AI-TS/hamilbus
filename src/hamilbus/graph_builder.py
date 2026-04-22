@@ -32,12 +32,12 @@ class GraphBuilder():
             return False
 
 
-    def merge_stops_by_name(self, stops:dict[int,Stop]) -> dict[int,Stop]:
+    def merge_stops_by_name(self, stops:list[Stop]) -> list[Stop]:
         """Merge stops sharing the same name using centroid coordinates."""
         grouped = defaultdict(list)
-        for _, stop in stops.items():
+        for stop in stops:
             grouped[stop.name].append(stop) # {"stopName" : [all stops with that name], ...}
-        merged_stops = {}
+        merged_stops = []
         for name, group in grouped.items():
             centroid_lat = sum(stop.lat for stop in group) / len(group)
             centroid_lon = sum(stop.lon for stop in group) / len(group)
@@ -55,14 +55,14 @@ class GraphBuilder():
                 lines = centroid_lines, 
                 parent_station_idx = None
             )
-            merged_stops[idx] = centroid_stop
+            merged_stops.append(centroid_stop)
         return merged_stops
 
 
-    def order_stops(self, stops):
+    def order_stops(self, stops:list[Stop]):
         '''Populate line.stops with ordered stops for each line'''
         grouped = defaultdict(list)
-        for _, stop in stops.items():
+        for stop in stops:
             for line in stop.lines:
                 grouped[line].append(stop) # {line : [list of stops], ...}
 
@@ -80,9 +80,9 @@ class GraphBuilder():
             line.stops = ordered_stops
 
 
-    def build_graph(self, lines):
+    def build_graph(self, lines:list[Line]):
         graph = BusNetworkGraph()
-        for _, line in lines.items() : 
+        for line in lines : 
             graph.add_line(line)
 
 
