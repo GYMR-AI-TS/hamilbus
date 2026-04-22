@@ -13,26 +13,25 @@ lines = hbus.reader.load_lines(ROUTES_PATH, SHAPES_PATH)
 
 print("Number of stops : ", len(stops))
 print("Number of lines : ", len(lines))
-print(list(stops.values())[0])
-print(list(stops.values())[2000])
-print(list(lines.values())[5])
+print(stops[0])
+print(stops[2000])
+print(lines[5])
 
-
+# Tests for reader.py, using the dataclasses
 def test_parsers():
     id = hbus.reader.parse_stop_id("FR_NAOLIB:StopPlace:194")
     assert id == 1000194
-
 
 def test_stops_number():
     stops = hbus.reader.load_stops(STOPS_PATH)
     assert len(stops) == 3741
 
-
 def test_lines_number():
     lines = hbus.reader.load_lines(ROUTES_PATH, SHAPES_PATH)
     assert len(lines) == 109
 
-
+# Tests for the dataclasses themselves
+# Stop
 def test_stop_creation_success():
     stop = hbus.Stop(
         index=0,
@@ -49,7 +48,6 @@ def test_stop_creation_success():
     assert stop.lines == []
     assert stop.parent_station_idx is None
 
-
 def test_stop_creation_failure():
     try:
         hbus.Stop(
@@ -62,7 +60,7 @@ def test_stop_creation_failure():
     except TypeError:
         pass  # Expected behavior
 
-
+# Line
 def test_line_creation():
     line = hbus.Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red")
     assert line.index == 0
@@ -72,7 +70,6 @@ def test_line_creation():
     assert line.shape == []
     assert line.stops == []
 
-
 def test_line_creation_failure():
     try:
         hbus.Line(index=0, long_name="Line 1 Long Name", color="red")
@@ -80,11 +77,10 @@ def test_line_creation_failure():
     except TypeError:
         pass  # Expected
 
-
+# BusNetworkGraph
 def test_bus_network_graph_creation():
     graph = hbus.BusNetworkGraph()
     assert isinstance(graph.graph, nx.MultiGraph)
-
 
 def test_add_stop_to_graph():
     graph = hbus.BusNetworkGraph()
@@ -98,7 +94,6 @@ def test_add_stop_to_graph():
     graph.add_stop(stop)
     assert graph.graph.has_node(stop.index)
     assert graph.graph.nodes[stop.index]["stop"] == stop
-
 
 def test_add_edge_to_graph():
     graph = hbus.BusNetworkGraph()
@@ -132,7 +127,6 @@ def test_add_edge_to_graph():
     )
     assert graph.graph[stop1.index][stop2.index][0]["distance"] == expected_distance
 
-
 def test_get_stops_returns_all_stops():
     graph = hbus.BusNetworkGraph()
     stop1 = hbus.Stop(
@@ -148,7 +142,6 @@ def test_get_stops_returns_all_stops():
     assert stop1 in stops
     assert stop2 in stops
     assert len(stops) == 2
-
 
 def test_get_edges_returns_edge_attributes():
     graph = hbus.BusNetworkGraph()
@@ -175,7 +168,6 @@ def test_get_edges_returns_edge_attributes():
     )
     assert data["distance"] == expected_distance
 
-
 def test_add_line_connects_stops_and_adds_nodes():
     graph = hbus.BusNetworkGraph()
     stops = [
@@ -200,7 +192,6 @@ def test_add_line_connects_stops_and_adds_nodes():
     assert graph.graph.number_of_edges() == 2
     assert graph.graph[0][1][0]["line"] == line
     assert graph.graph[1][2][0]["line"] == line
-
 
 def test_fully_connected_graph_preserves_edge_data():
     graph = hbus.BusNetworkGraph()
