@@ -11,18 +11,36 @@ class GraphBuilder():
     def __init__(self, stops:list[Stop], lines:list[Line]):
         self.stops = stops
         self.lines = lines
+        self.transformer = Transformer.from_crs("EPSG:4326", "EPSG:2154", always_xy=True)
+        self._line_geometries: dict[int, LineString] = {}
+        self._line_bounds: dict[int, tuple[float, float, float, float]] = {}
+        self._build_line_index()
+
+    def _build_line_index(self) -> None:
+        """Project line shapes once and cache their geometries/bounds."""
+        for line in self.lines:
+            shape_projected = [self.project(coords[0], coords[1]) for coords in line.shape]
+            linestring = LineString(shape_projected)
+            self._line_geometries[line.index] = linestring
+            self._line_bounds[line.index] = linestring.bounds
 
     def project(self, lon:float, lat:float):
         '''Project (lon,lat) coordinates in meters'''
-        transformer = Transformer.from_crs("EPSG:4326", "EPSG:2154", always_xy=True)
-        return transformer.transform(lon, lat) # lon,lat instead of lat,lon by convention (always_xy=True)
+        return self.transformer.transform(lon, lat) # lon,lat instead of lat,lon by convention (always_xy=True)
 
     def determine_belonging(self, stop:Stop, line:Line, threshold=50) -> bool:
         '''Determine if a stop belongs to a line by checking if it is close enough'''
         stop_projected = Point(self.project(stop.lon, stop.lat))
-        shape_projected = [self.project(coords[1], coords[0]) for coords in line.shape]
-        linestring = LineString(shape_projected)
-        
+        line_bounds = self._line_bounds[line.index]
+        minx, miny, maxx, maxy = line_bounds
+        # Check if the stop belongs in the Line's bounding box + threshold
+        if not ( 
+            minx - threshold <= stop_projected.x <= maxx + threshold
+            and miny - threshold <= stop_projected.y <= maxy + threshold
+        ):
+            return False
+
+        linestring = self._line_geometries[line.index]
         distance = stop_projected.distance(linestring)
         if distance < threshold:
             if line.index not in stop.lines : # We populate stop.lines but line.stops will come after deduping stops
