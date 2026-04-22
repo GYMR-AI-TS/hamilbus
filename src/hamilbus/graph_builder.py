@@ -66,7 +66,7 @@ class GraphBuilder:
 
     def merge_stops_by_name(self, stops: list[Stop] = None) -> list[Stop]:
         """Merge stops sharing the same name using centroid coordinates."""
-        if stops == None:
+        if stops is None:
             stops = self.stops
         grouped = defaultdict(list)
         for stop in stops:
@@ -97,7 +97,7 @@ class GraphBuilder:
 
     def order_stops(self, stops: list[Stop] = None):
         """Populate line.stops with ordered stops for all lines associated to a stop"""
-        if stops == None:
+        if stops is None:
             stops = self.stops
         grouped = defaultdict(list)
         for stop in stops:
@@ -123,7 +123,7 @@ class GraphBuilder:
 
     def build_graph(self, lines: list[Line] = None) -> BusNetworkGraph:
         """Builds a BusNetworkGraph object from a list of Line objects with ordered stops"""
-        if lines == None:
+        if lines is None:
             lines = self.lines
         graph = BusNetworkGraph()
         for line in lines:
