@@ -1,6 +1,7 @@
 ### graph_builder.py
 ### Builds a graph from the raw data
 
+import tqdm
 from pyproj import Transformer
 from shapely.geometry import Point, LineString
 from collections import defaultdict
@@ -48,6 +49,12 @@ class GraphBuilder():
             return True
         else : 
             return False
+
+    def assign_stops_to_lines(self, threshold: float = 50) -> None:
+        """Populate each stop with all nearby lines using cached geometries."""
+        for stop in tqdm(self.stops, desc="Assigning stops to lines", unit="stop"):
+            for line in self.lines:
+                self.determine_belonging(stop, line, threshold=threshold)
 
 
     def merge_stops_by_name(self, stops:list[Stop]) -> list[Stop]:
