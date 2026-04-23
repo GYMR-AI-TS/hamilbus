@@ -11,7 +11,15 @@ from hamilbus.datamodels import Stop, Line, BusNetworkGraph
 class GraphBuilder:
     """Class to handle the operations to build to a graph from Stop and Line objects lists"""
 
-    def __init__(self, stops: list[Stop], lines: list[Line]):
+    def __init__(self, stops: list[Stop] | None, lines: list[Line] | None):
+        if stops is None:
+            raise ValueError("'stops' cannot be None; pass a list[Stop].")
+        if lines is None:
+            raise ValueError("'lines' cannot be None; pass a list[Line].")
+        if not isinstance(stops, list) or any(not isinstance(s, Stop) for s in stops):
+            raise TypeError("'stops' must be a list of Stop objects.")
+        if not isinstance(lines, list) or any(not isinstance(l, Line) for l in lines):
+            raise TypeError("'lines' must be a list of Line objects.")
         self.stops = stops
         self.lines = lines
         self.transformer = Transformer.from_crs(
@@ -63,12 +71,10 @@ class GraphBuilder:
             for line in self.lines:
                 self.determine_belonging(stop, line, threshold=threshold)
 
-    def merge_stops(self, stops: list[Stop] = None, strategy: str = "name") -> list[Stop]:
+    def merge_stops(self, strategy: str = "name") -> list[Stop]:
         """Merge stops using a chosen Stop attribute (defaults to name)."""
-        if stops is None:
-            stops = self.stops
         grouped = defaultdict(list)
-        for stop in stops:
+        for stop in self.stops:
             # grouped = {"stopName" : [all stops with that name], ...}
             if not hasattr(stop, strategy):
                 raise ValueError(f"Invalid merge strategy '{strategy}' for Stop")
@@ -99,12 +105,10 @@ class GraphBuilder:
             merged_stops.append(centroid_stop)
         return merged_stops
 
-    def order_stops(self, stops: list[Stop] = None):
+    def order_stops(self):
         """Populate line.stops with ordered stops for all lines associated to a stop"""
-        if stops is None:
-            stops = self.stops
         grouped = defaultdict(list)
-        for stop in stops:
+        for stop in self.stops:
             for line in stop.lines:
                 grouped[line].append(stop)  # {line : [list of stops], ...}
 
@@ -125,11 +129,9 @@ class GraphBuilder:
             ordered_stops = [stop for _, stop in stop_positions]
             line.stops = ordered_stops
 
-    def build_graph(self, lines: list[Line] = None) -> BusNetworkGraph:
+    def build_graph(self) -> BusNetworkGraph:
         """Builds a BusNetworkGraph object from a list of Line objects with ordered stops"""
-        if lines is None:
-            lines = self.lines
         graph = BusNetworkGraph()
-        for line in lines:
+        for line in self.lines:
             graph.add_line(line)
         return graph
