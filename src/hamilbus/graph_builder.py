@@ -59,8 +59,8 @@ class GraphBuilder:
         distance = stop_projected.distance(self._line_shapes[line.index])
         if distance < threshold:
             # We populate stop.lines but line.stops will come after deduping stops
-            if line.index not in stop.lines:
-                stop.lines.append(line.index)
+            if line not in stop.lines:
+                stop.lines.append(line)
             return True
         else:
             return False

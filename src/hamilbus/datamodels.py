@@ -14,7 +14,7 @@ class Stop:
     type: str  # parent_station, substation, or centroid
     lat: float
     lon: float
-    lines: list[int] = field(default_factory=list)
+    lines: list[Line] = field(default_factory=list)
     parent_station_idx: Optional[int] = None
 
 
