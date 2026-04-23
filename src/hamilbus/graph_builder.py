@@ -31,9 +31,9 @@ class GraphBuilder:
 
     def _build_lines(self) -> None:
         """Project line shapes once and cache their linestrings/bounds."""
-        for line in self.lines:
+        for line in tqdm(self.lines, desc="Computing lines projections and storing them", unit="line"):
             shape_projected = [
-                self.project(coords[0], coords[1]) for coords in line.shape
+                self.project(coords[1], coords[0]) for coords in line.shape
             ]
             linestring = LineString(shape_projected)
             self._line_shapes[line.index] = linestring
