@@ -27,7 +27,7 @@ def main():
 
     builder = GraphBuilder(stops, lines)
     builder.assign_stops_to_lines()
-    builder.stops = builder.merge_stops_by_name()
+    builder.stops = builder.merge_stops()
     builder.order_stops()
     graph = builder.build_graph()
     print(graph)

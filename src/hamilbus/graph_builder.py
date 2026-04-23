@@ -3,7 +3,7 @@
 
 from tqdm import tqdm
 from pyproj import Transformer
-from collections import defaultdict
+from collections import defaultdict, Counter
 from shapely.geometry import Point, LineString
 from hamilbus.datamodels import Stop, Line, BusNetworkGraph
 
@@ -63,19 +63,24 @@ class GraphBuilder:
             for line in self.lines:
                 self.determine_belonging(stop, line, threshold=threshold)
 
-    def merge_stops_by_name(self, stops: list[Stop] = None) -> list[Stop]:
-        """Merge stops sharing the same name using centroid coordinates."""
+    def merge_stops(self, stops: list[Stop] = None, strategy: str = "name") -> list[Stop]:
+        """Merge stops using a chosen Stop attribute (defaults to name)."""
         if stops is None:
             stops = self.stops
         grouped = defaultdict(list)
         for stop in stops:
             # grouped = {"stopName" : [all stops with that name], ...}
-            grouped[stop.name].append(stop)
+            if not hasattr(stop, strategy):
+                raise ValueError(f"Invalid merge strategy '{strategy}' for Stop")
+            grouped[getattr(stop, strategy)].append(stop)
         merged_stops = []
-        for name, group in grouped.items():
+        for _, group in grouped.items():
             centroid_lat = sum(stop.lat for stop in group) / len(group)
             centroid_lon = sum(stop.lon for stop in group) / len(group)
             centroid_lines = []
+            idx = group[0].index
+            # Keep a human-readable stop name, even if merge strategy is not "name".
+            centroid_name = Counter(stop.name for stop in group).most_common(1)[0][0]
             for stop in group:
                 centroid_lines += [
                     line for line in stop.lines if line not in centroid_lines
@@ -84,7 +89,7 @@ class GraphBuilder:
                     idx = stop.index
             centroid_stop = Stop(
                 index=idx,
-                name=name,
+                name=centroid_name,
                 type="centroid",
                 lat=centroid_lat,
                 lon=centroid_lon,
