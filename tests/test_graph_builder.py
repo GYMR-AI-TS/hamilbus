@@ -11,12 +11,14 @@ def test_class_creation():
     assert graph_builder.stops == stops
     assert graph_builder.lines == lines
 
+
 def test_class_creation_failure_1():
     try:
-        graph_builder = GraphBuilder()
+        _ = GraphBuilder()
         assert False, "Should have raised ValueError for missing 'stops' parameter"
     except TypeError:
         pass  # Expected behavior
+
 
 def test_class_creation_failure_2():
     stops = [Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-74.0060), Stop(index=1, name="Stop 2", type="parent_station", lat=40.7129, lon=-74.0061)]
@@ -27,13 +29,74 @@ def test_class_creation_failure_2():
     except TypeError:
         pass  # Expected behavior
 
+
 def test_build_lines():
     stops = [Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-1.5006), Stop(index=1, name="Stop 2", type="parent_station", lat=40.7129, lon=-1.5007)]
     shape = [(stops[0].lat, stops[0].lon), (stops[1].lat, stops[1].lon)]
     lines = [Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red", shape=shape)]
     graph_builder = GraphBuilder(stops, lines)
-    expected_points = [graph_builder.project_lonlat_to_meters(lon, lat) for lat, lon in shape]
+    expected_points = [graph_builder.transformer.transform(lon, lat) for lat, lon in shape]
     expected_line = LineString(expected_points)
     assert graph_builder._line_shapes[0].equals_exact(expected_line, tolerance=1e-6)
     for got, expected in zip(graph_builder._line_bounds[0], expected_line.bounds):
         assert got == pytest.approx(expected, rel=1e-9, abs=1e-6)
+
+
+def test_determine_belonging():
+    pass
+
+
+def test_assign_stops_to_lines():
+    pass
+
+
+def test_merge_stops():
+    lines = [
+        Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red"),
+        Line(index=1, name="Line 2", long_name="Line 2 Long Name", color="blue"),
+    ]
+    stops = [
+        Stop(index=1_000_025, name="Stop 1", type="parent_station", lat=40, lon=-1, lines=[lines[0]]), 
+        Stop(index=2_000_032, name="Stop 1", type="substation", lat=41, lon=-2, lines=[lines[1]]),
+    ]
+    graph_builder = GraphBuilder(stops, lines)
+    merged_stops = graph_builder.merge_stops()
+    assert len(merged_stops) == 1
+    assert merged_stops[0].index == 3_000_025
+    assert merged_stops[0].name == "Stop 1"
+    assert merged_stops[0].type == "centroid"
+    assert merged_stops[0].lat == 40.5
+    assert merged_stops[0].lon == -1.5
+    assert merged_stops[0].lines == lines
+    assert merged_stops[0].parent_station_idx is None
+
+
+def test_order_stops():
+    pass
+
+
+def test_build_graph():
+    stops = [
+        Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-1.5006), 
+        Stop(index=1, name="Stop 2", type="parent_station", lat=40.7129, lon=-1.5007),
+        Stop(index=2, name="Stop 3", type="substation", lat=40.7130, lon=-1.5008),
+        Stop(index=3, name="Stop 4", type="substation", lat=40.7131, lon=-1.5009),
+    ]
+    lines = [
+        Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red", stops=[stops[0], stops[1]]), 
+        Line(index=1, name="Line 2", long_name="Line 2 Long Name", color="blue", stops=[stops[0], stops[2]]),
+        Line(index=2, name="Line 3", long_name="Line 3 Long Name", color="green", stops=[stops[2], stops[3]]),
+        Line(index=3, name="Line 4", long_name="Line 4 Long Name", color="yellow", stops=[stops[1], stops[2], stops[3]]),
+    ]
+    graph_builder = GraphBuilder(stops, lines)
+    graph = graph_builder.build_graph()
+    assert len(graph.get_stops()) == 4
+    assert len(graph.get_edges()) == 5
+    assert graph.get_stops()[0].index == 0
+    assert graph.get_stops()[1].index == 1
+    assert graph.get_stops()[2].index == 2
+    assert graph.get_stops()[3].index == 3
+    assert graph.get_edges()[0][0].index == 0
+    assert graph.get_edges()[0][1].index == 1
+    assert graph.get_edges()[1][0].index == 0
+    assert graph.get_edges()[1][1].index == 2
