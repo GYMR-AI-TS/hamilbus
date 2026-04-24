@@ -75,7 +75,7 @@ class GraphBuilder:
                 raise ValueError(f"Invalid merge strategy '{strategy}' for Stop")
             grouped[getattr(stop, strategy)].append(stop)
         merged_stops = []
-        for _, group in grouped.items():
+        for _, group in tqdm(grouped.items(), desc=f'Merging stops by {strategy}', unit="group of stops"):
             centroid_lat = sum(stop.lat for stop in group) / len(group)
             centroid_lon = sum(stop.lon for stop in group) / len(group)
             centroid_lines = []
@@ -105,16 +105,15 @@ class GraphBuilder:
         grouped = defaultdict(list)
         for stop in self.stops:
             for line in stop.lines:
-                grouped[line].append(stop)  # {line : [list of stops], ...}
+                grouped[line.index].append(stop)  # {line : [list of stops], ...}
 
-        for line, group in grouped.items():
-            shape_projected = self._line_shapes[line.index]
-            linestring = LineString(shape_projected)
+        for line_index, group in tqdm(grouped.items(), desc='Ordering stops along the lines', unit='line'):
+            shape_projected = self._line_shapes[line_index]
             stop_positions = []
             # Project each stop onto the line and get its position along the route
             for stop in group:
                 stop_projected = Point(self.transformer.transform(stop.lon, stop.lat))
-                position = linestring.project(stop_projected, normalized=True)
+                position = shape_projected.project(stop_projected, normalized=True)
                 stop_positions.append((position, stop))
 
             # Sort by position along the route → this is the stop order
