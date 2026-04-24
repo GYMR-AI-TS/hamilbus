@@ -8,15 +8,6 @@ STOPS_PATH = DATA_DIR / "stops.txt"
 ROUTES_PATH = DATA_DIR / "routes.txt"
 SHAPES_PATH = DATA_DIR / "shapes.txt"
 
-stops = hbus.reader.load_stops(STOPS_PATH)
-lines = hbus.reader.load_lines(ROUTES_PATH, SHAPES_PATH)
-
-print("Number of stops : ", len(stops))
-print("Number of lines : ", len(lines))
-print(stops[0])
-print(stops[2000])
-print(lines[5])
-
 
 # Tests for reader.py, using the dataclasses
 def test_parsers():
