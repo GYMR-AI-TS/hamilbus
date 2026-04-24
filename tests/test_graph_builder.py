@@ -108,7 +108,21 @@ def test_merge_stops():
 
 
 def test_order_stops():
-    pass
+    shape = [(40, 1), (40, 2), (40, 3)]
+    lines = [
+        Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red", shape=shape),
+        Line(index=1, name="Line 2", long_name="Line that touches no stop", color="blue"),
+    ]
+    stops = [
+        Stop(index=0, name="Stop 1", type="parent_station", lat=40, lon=1, lines=[lines[0]]),
+        Stop(index=1, name="Stop 2", type="substation", lat=40, lon=2, lines=[lines[0]]),
+        Stop(index=2, name="Stop 3", type="centroid", lat=40, lon=1.5, lines=[lines[0]]),
+        Stop(index=3, name="Stop 3.5", type="centroid", lat=40, lon=2),
+    ]
+    graph_builder = GraphBuilder(stops, lines)
+    graph_builder.order_stops()
+    assert lines[0].stops == [stops[0], stops[2], stops[1]]
+    assert lines[1].stops == []
 
 
 def test_build_graph():
