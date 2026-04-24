@@ -1,3 +1,4 @@
+from hamilbus import graph_builder
 from hamilbus.graph_builder import GraphBuilder
 from hamilbus.datamodels import Stop, Line
 from shapely.geometry import LineString
@@ -43,7 +44,17 @@ def test_build_lines():
 
 
 def test_determine_belonging():
-    pass
+    stops = [
+        Stop(index=0, name="Stop 1", type="parent_station", lat=40, lon=-1),
+        Stop(index=1, name="Stop 2", type="centroid", lat=39, lon=-2),
+    ]
+    shape = [(stops[0].lat, stops[0].lon), (stops[0].lat + 0.01, stops[0].lon + 0.01)]
+    lines = [Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red", shape=shape)]
+    graph_builder = GraphBuilder(stops, lines)
+    assert graph_builder.determine_belonging(stops[0], lines[0])
+    assert stops[0].lines == lines
+    assert not graph_builder.determine_belonging(stops[1], lines[0])
+    assert stops[1].lines == []
 
 
 def test_assign_stops_to_lines():
