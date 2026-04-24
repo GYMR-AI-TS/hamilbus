@@ -58,7 +58,32 @@ def test_determine_belonging():
 
 
 def test_assign_stops_to_lines():
-    pass
+    stops = [
+        Stop(index=0, name="Stop 1", type="parent_station", lat=40, lon=-1),
+        Stop(index=1, name="Stop 2", type="substation", lat=40.000100, lon=-1.000100),
+        Stop(index=2, name="Stop 3", type="centroid", lat=39, lon=-2),
+    ]
+    shapes = [
+        [(40, -1), (39, 0), (38, 1)],
+        [(50, 5), (51, 6)],
+    ]
+    lines = [
+        Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red", shape=shapes[0]),
+        Line(index=1, name="Line 2", long_name="Line 2 Long Name", color="blue", shape=shapes[1]),
+    ]
+    graph_builder = GraphBuilder(stops, lines)
+    graph_builder.assign_stops_to_lines()
+    assert stops[0].lines == lines[:1]
+    assert stops[1].lines == lines[:1]
+    assert stops[2].lines == []
+    for stop in stops:
+        assert lines[1] not in stop.lines
+        # Empty lines attribute
+        stop.lines=[]
+    # Retry but with a lower threshold
+    graph_builder.assign_stops_to_lines(threshold=1)
+    assert stops[0].lines == lines[:1]
+    assert stops[1].lines == []
 
 
 def test_merge_stops():
