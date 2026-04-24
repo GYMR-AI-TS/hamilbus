@@ -33,20 +33,15 @@ class GraphBuilder:
         """Project line shapes once and cache their linestrings/bounds."""
         for line in tqdm(self.lines, desc="Computing lines projections and storing them", unit="line"):
             shape_projected = [
-                self.project_lonlat_to_meters(coords[1], coords[0]) for coords in line.shape
+                self.transformer.transform(coords[1], coords[0]) for coords in line.shape
             ]
             linestring = LineString(shape_projected)
             self._line_shapes[line.index] = linestring
             self._line_bounds[line.index] = linestring.bounds
 
-    def project_lonlat_to_meters(self, lon: float, lat: float):
-        """Project (lon,lat) coordinates in meters"""
-        # lon,lat instead of lat,lon by convention (always_xy=True)
-        return self.transformer.transform(lon, lat)
-
     def determine_belonging(self, stop: Stop, line: Line, threshold: float=50) -> bool:
         """Determine if a stop belongs to a line by checking if it is close enough"""
-        stop_projected = Point(self.project_lonlat_to_meters(stop.lon, stop.lat))
+        stop_projected = Point(self.transformer.transform(stop.lon, stop.lat))
         line_bounds = self._line_bounds[line.index]
         min_x, min_y, max_x, max_y = line_bounds
         # Check if the stop belongs in the Line's bounding box + threshold
@@ -118,7 +113,7 @@ class GraphBuilder:
             stop_positions = []
             # Project each stop onto the line and get its position along the route
             for stop in group:
-                stop_projected = Point(self.project_lonlat_to_meters(stop.lon, stop.lat))
+                stop_projected = Point(self.transformer.transform(stop.lon, stop.lat))
                 position = linestring.project(stop_projected, normalized=True)
                 stop_positions.append((position, stop))
 
