@@ -89,7 +89,7 @@ class GraphBuilder:
                 if stop.type == "parent_station":
                     idx = stop.index
             centroid_stop = Stop(
-                index=idx,
+                index=(idx%1_000_000 + 3_000_000),
                 name=centroid_name,
                 type="centroid",
                 lat=centroid_lat,
