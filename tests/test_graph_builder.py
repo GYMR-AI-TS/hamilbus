@@ -38,8 +38,8 @@ def test_build_lines():
     graph_builder = GraphBuilder(stops, lines)
     expected_points = [graph_builder.transformer.transform(lon, lat) for lat, lon in shape]
     expected_line = LineString(expected_points)
-    assert graph_builder._line_shapes[0].equals_exact(expected_line, tolerance=1e-6)
-    for got, expected in zip(graph_builder._line_bounds[0], expected_line.bounds):
+    assert graph_builder._line_shapes[0][0].equals_exact(expected_line, tolerance=1e-6)
+    for got, expected in zip(graph_builder._line_shapes[0][1], expected_line.bounds):
         assert got == pytest.approx(expected, rel=1e-9, abs=1e-6)
 
 
