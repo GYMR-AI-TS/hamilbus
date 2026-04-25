@@ -25,8 +25,7 @@ class GraphBuilder:
         self.transformer = Transformer.from_crs(
             "EPSG:4326", "EPSG:2154", always_xy=True
         )
-        self._line_shapes: dict[int, LineString] = {}
-        self._line_bounds: dict[int, tuple[float, float, float, float]] = {}
+        self._line_shapes: dict[int, tuple[LineString, tuple[float, float, float, float]]] = {}
         self._build_lines()
 
     def _build_lines(self) -> None:
@@ -36,14 +35,13 @@ class GraphBuilder:
                 self.transformer.transform(coords[1], coords[0]) for coords in line.shape
             ]
             linestring = LineString(shape_projected)
-            self._line_shapes[line.index] = linestring
-            self._line_bounds[line.index] = linestring.bounds
+            self._line_shapes[line.index] = (linestring, linestring.bounds)
 
     def determine_belonging(self, stop: Stop, line: Line, threshold: float=50) -> bool:
         """Determine if a stop belongs to a line by checking if it is close enough"""
         stop_projected = Point(self.transformer.transform(stop.lon, stop.lat))
-        line_bounds = self._line_bounds[line.index]
-        min_x, min_y, max_x, max_y = line_bounds
+        linestring, bounds = self._line_shapes[line.index]
+        min_x, min_y, max_x, max_y = bounds
         # Check if the stop belongs in the Line's bounding box + threshold
         if not (
             min_x - threshold <= stop_projected.x <= max_x + threshold
@@ -51,7 +49,7 @@ class GraphBuilder:
         ):
             return False
         # Only if it does, calculate its distance to the line to determine belonging
-        distance = stop_projected.distance(self._line_shapes[line.index])
+        distance = stop_projected.distance(linestring)
         if distance < threshold:
             # We populate stop.lines but line.stops will come after deduping stops
             if line not in stop.lines:
@@ -108,7 +106,7 @@ class GraphBuilder:
                 grouped[line.index].append(stop)  # {line : [list of stops], ...}
 
         for line_index, group in tqdm(grouped.items(), desc='Ordering stops along the lines', unit='line'):
-            shape_projected = self._line_shapes[line_index]
+            shape_projected = self._line_shapes[line_index][0]
             stop_positions = []
             # Project each stop onto the line and get its position along the route
             for stop in group:
