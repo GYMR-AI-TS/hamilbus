@@ -12,14 +12,14 @@ def stop_payload(stop: Stop) -> dict[str, Any]:
         "type": stop.type,
         "lat": stop.lat,
         "lon": stop.lon,
-        "lines": stop.lines,
+        "lines": [line.index for line in stop.lines],
         "parent_station_idx": stop.parent_station_idx,
     }
 
 
 def line_payload(line: Line) -> dict[str, Any]:
     if line.shape:
-        shape = [{"lat": lat, "lon": lon} for lon, lat in line.shape]
+        shape = [{"lat": lat, "lon": lon} for lat, lon in line.shape]
     elif line.stops:
         shape = [{"lat": stop.lat, "lon": stop.lon} for stop in line.stops]
     else:
