@@ -4,7 +4,6 @@
 from typing import Optional, List
 from dataclasses import dataclass, field
 import networkx as nx
-from math import sqrt
 from geopy.distance import geodesic
 
 
