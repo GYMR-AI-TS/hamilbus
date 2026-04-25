@@ -111,8 +111,8 @@ def test_add_edge_to_graph():
         stop2,
         line=hbus.Line(id="0", name="Line 1", long_name="Line 1 Long Name", color="red"),
     )
-    assert graph.graph.has_edge(stop1.id, stop2.id)
-    assert graph.graph[stop1.id][stop2.id][0]["line"].id == "0"
+    assert graph.graph.has_edge(stop1.index, stop2.index)
+    assert graph.graph[stop1.index][stop2.index][0]["line"].index == 0
 
 
 def test_get_stops_returns_all_stops():
