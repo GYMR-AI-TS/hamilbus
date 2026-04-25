@@ -12,7 +12,8 @@ requires-python = ">=3.14"
 dependencies = [
     "fastapi",
     "networkx",
-    "uvicorn"
+    "uvicorn",
+    "geopy"
 ]
 
 [project.optional-dependencies]

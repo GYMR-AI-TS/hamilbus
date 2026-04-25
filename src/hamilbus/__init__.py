@@ -7,6 +7,7 @@ __all__ = [
     "BusNetworkGraph",
     "Line",
     "Stop",
+    "BusNetworkGraph",
     "reader",
     "load_lines",
     "load_stops",
