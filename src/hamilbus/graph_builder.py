@@ -16,9 +16,9 @@ class GraphBuilder:
             raise ValueError("'stops' cannot be None; pass a list[Stop].")
         if lines is None:
             raise ValueError("'lines' cannot be None; pass a list[Line].")
-        if not isinstance(stops, list) or any(not isinstance(s, Stop) for s in stops):
+        if not isinstance(stops, list) or any(not isinstance(x, Stop) for x in stops):
             raise TypeError("'stops' must be a list of Stop objects.")
-        if not isinstance(lines, list) or any(not isinstance(l, Line) for l in lines):
+        if not isinstance(lines, list) or any(not isinstance(x, Line) for x in lines):
             raise TypeError("'lines' must be a list of Line objects.")
         self.stops = stops
         self.lines = lines
