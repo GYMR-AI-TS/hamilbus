@@ -4,7 +4,7 @@
 from typing import Optional, List
 from dataclasses import dataclass, field
 import networkx as nx
-from math import sqrt
+from geopy.distance import geodesic
 
 
 @dataclass
@@ -44,7 +44,7 @@ class BusNetworkGraph:
             stop1.index,
             stop2.index,
             line=line,
-            distance=sqrt((stop1.lat - stop2.lat) ** 2 + (stop1.lon - stop2.lon) ** 2),
+            distance=geodesic((stop1.lat, stop1.lon), (stop2.lat, stop2.lon)).meters,
         )
 
     def add_line(self, line: Line):
