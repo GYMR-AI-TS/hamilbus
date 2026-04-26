@@ -3,6 +3,7 @@ import hamilbus.reader as reader
 from hamilbus.graph_builder import GraphBuilder
 from hamilbus.web import run_server, set_network
 
+
 def main() -> None:
     """Start the Hamilbus local web viewer on port 3000."""
 

@@ -25,19 +25,26 @@ class GraphBuilder:
         self.transformer = Transformer.from_crs(
             "EPSG:4326", "EPSG:2154", always_xy=True
         )
-        self._line_shapes: dict[int, tuple[LineString, tuple[float, float, float, float]]] = {}
+        self._line_shapes: dict[
+            int, tuple[LineString, tuple[float, float, float, float]]
+        ] = {}
         self._build_lines()
 
     def _build_lines(self) -> None:
         """Project line shapes once and cache their linestrings/bounds."""
-        for line in tqdm(self.lines, desc="Computing lines projections and storing them", unit="line"):
+        for line in tqdm(
+            self.lines, desc="Computing and storing lines projections", unit="line"
+        ):
             shape_projected = [
-                self.transformer.transform(coords[1], coords[0]) for coords in line.shape
+                self.transformer.transform(coords[1], coords[0])
+                for coords in line.shape
             ]
             linestring = LineString(shape_projected)
             self._line_shapes[line.index] = (linestring, linestring.bounds)
 
-    def determine_belonging(self, stop: Stop, line: Line, threshold: float=50) -> bool:
+    def determine_belonging(
+        self, stop: Stop, line: Line, threshold: float = 50
+    ) -> bool:
         """Determine if a stop belongs to a line by checking if it is close enough"""
         stop_projected = Point(self.transformer.transform(stop.lon, stop.lat))
         linestring, bounds = self._line_shapes[line.index]
@@ -73,7 +80,9 @@ class GraphBuilder:
                 raise ValueError(f"Invalid merge strategy '{strategy}' for Stop")
             grouped[getattr(stop, strategy)].append(stop)
         merged_stops = []
-        for _, group in tqdm(grouped.items(), desc=f'Merging stops by {strategy}', unit="group of stops"):
+        for _, group in tqdm(
+            grouped.items(), desc=f"Merging stops by {strategy}", unit="group of stops"
+        ):
             centroid_lat = sum(stop.lat for stop in group) / len(group)
             centroid_lon = sum(stop.lon for stop in group) / len(group)
             centroid_lines = []
@@ -87,7 +96,7 @@ class GraphBuilder:
                 if stop.type == "parent_station":
                     idx = stop.index
             centroid_stop = Stop(
-                index=(idx%1_000_000 + 3_000_000),
+                index=(idx % 1_000_000 + 3_000_000),
                 name=centroid_name,
                 type="centroid",
                 lat=centroid_lat,
@@ -105,7 +114,9 @@ class GraphBuilder:
             for line in stop.lines:
                 grouped[line.index].append(stop)  # {line : [list of stops], ...}
 
-        for line_index, group in tqdm(grouped.items(), desc='Ordering stops along the lines', unit='line'):
+        for line_index, group in tqdm(
+            grouped.items(), desc="Ordering stops along the lines", unit="line"
+        ):
             shape_projected = self._line_shapes[line_index][0]
             stop_positions = []
             # Project each stop onto the line and get its position along the route

@@ -63,7 +63,7 @@ def load_lines(routes_path: str | Path, shapes_path: str | Path) -> list[Line]:
                 index=num,
                 name=row["route_short_name"],
                 long_name=row["route_long_name"],
-                color="#"+row["route_color"].upper(),
+                color="#" + row["route_color"].upper(),
             )
             lines_dict[line.index] = line
             name_to_id[line.name] = line.index
