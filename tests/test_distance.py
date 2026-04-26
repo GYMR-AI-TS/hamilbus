@@ -62,3 +62,9 @@ def test_compute_distance_matrix():
     ]
     assert distance_matrix[(stop1.index, stop3.index)]["path"] == []
     assert distance_matrix[(stop2.index, stop3.index)]["path"] == []
+
+
+def test_no_stops():
+    graph = hbus.BusNetworkGraph()
+    distance_matrix = hbus.compute_distance_matrix(graph)
+    assert distance_matrix == {}
