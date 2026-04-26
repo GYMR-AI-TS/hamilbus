@@ -27,7 +27,9 @@ jobs:
       run: pytest
 
     - name: Check code formatting
-      run: black --check .
+      run: |
+        black --check src/
+        black --check tests/ --line-length 130
 
     - name: Check linting
       run: ruff check .

@@ -6,7 +6,10 @@ import pytest
 
 
 def test_class_creation():
-    stops = [Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-74.0060), Stop(index=1, name="Stop 2", type="parent_station", lat=40.7129, lon=-74.0061)]
+    stops = [
+        Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-74.0060),
+        Stop(index=1, name="Stop 2", type="parent_station", lat=40.7129, lon=-74.0061),
+    ]
     lines = [Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red", stops=[stops[0], stops[1]])]
     graph_builder = GraphBuilder(stops, lines)
     assert graph_builder.stops == stops
@@ -22,7 +25,10 @@ def test_class_creation_failure_1():
 
 
 def test_class_creation_failure_2():
-    stops = [Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-74.0060), Stop(index=1, name="Stop 2", type="parent_station", lat=40.7129, lon=-74.0061)]
+    stops = [
+        Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-74.0060),
+        Stop(index=1, name="Stop 2", type="parent_station", lat=40.7129, lon=-74.0061),
+    ]
     lines = ["line1", "line2"]
     try:
         graph_builder = GraphBuilder(stops, lines)
@@ -32,7 +38,10 @@ def test_class_creation_failure_2():
 
 
 def test_build_lines():
-    stops = [Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-1.5006), Stop(index=1, name="Stop 2", type="parent_station", lat=40.7129, lon=-1.5007)]
+    stops = [
+        Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-1.5006),
+        Stop(index=1, name="Stop 2", type="parent_station", lat=40.7129, lon=-1.5007),
+    ]
     shape = [(stops[0].lat, stops[0].lon), (stops[1].lat, stops[1].lon)]
     lines = [Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red", shape=shape)]
     graph_builder = GraphBuilder(stops, lines)
@@ -79,7 +88,7 @@ def test_assign_stops_to_lines():
     for stop in stops:
         assert lines[1] not in stop.lines
         # Empty lines attribute
-        stop.lines=[]
+        stop.lines = []
     # Retry but with a lower threshold
     graph_builder.assign_stops_to_lines(threshold=1)
     assert stops[0].lines == lines[:1]
@@ -92,7 +101,7 @@ def test_merge_stops():
         Line(index=1, name="Line 2", long_name="Line 2 Long Name", color="blue"),
     ]
     stops = [
-        Stop(index=1_000_025, name="Stop 1", type="parent_station", lat=40, lon=-1, lines=[lines[0]]), 
+        Stop(index=1_000_025, name="Stop 1", type="parent_station", lat=40, lon=-1, lines=[lines[0]]),
         Stop(index=2_000_032, name="Stop 1", type="substation", lat=41, lon=-2, lines=[lines[1]]),
     ]
     graph_builder = GraphBuilder(stops, lines)
@@ -127,13 +136,13 @@ def test_order_stops():
 
 def test_build_graph():
     stops = [
-        Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-1.5006), 
+        Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-1.5006),
         Stop(index=1, name="Stop 2", type="parent_station", lat=40.7129, lon=-1.5007),
         Stop(index=2, name="Stop 3", type="substation", lat=40.7130, lon=-1.5008),
         Stop(index=3, name="Stop 4", type="substation", lat=40.7131, lon=-1.5009),
     ]
     lines = [
-        Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red", stops=[stops[0], stops[1]]), 
+        Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red", stops=[stops[0], stops[1]]),
         Line(index=1, name="Line 2", long_name="Line 2 Long Name", color="blue", stops=[stops[0], stops[2]]),
         Line(index=2, name="Line 3", long_name="Line 3 Long Name", color="green", stops=[stops[2], stops[3]]),
         Line(index=3, name="Line 4", long_name="Line 4 Long Name", color="yellow", stops=[stops[1], stops[2], stops[3]]),

@@ -117,26 +117,18 @@ def test_add_edge_to_graph():
     graph.add_edge(
         stop1,
         stop2,
-        line=hbus.Line(
-            index=0, name="Line 1", long_name="Line 1 Long Name", color="red"
-        ),
+        line=hbus.Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red"),
     )
     assert graph.graph.has_edge(stop1.index, stop2.index)
     assert graph.graph[stop1.index][stop2.index][0]["line"].index == 0
-    expected_distance = sqrt(
-        (stop1.lat - stop2.lat) ** 2 + (stop1.lon - stop2.lon) ** 2
-    )
+    expected_distance = sqrt((stop1.lat - stop2.lat) ** 2 + (stop1.lon - stop2.lon) ** 2)
     assert graph.graph[stop1.index][stop2.index][0]["distance"] == expected_distance
 
 
 def test_get_stops_returns_all_stops():
     graph = hbus.BusNetworkGraph()
-    stop1 = hbus.Stop(
-        index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-74.0060
-    )
-    stop2 = hbus.Stop(
-        index=1, name="Stop 2", type="substation", lat=40.7129, lon=-74.0061
-    )
+    stop1 = hbus.Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-74.0060)
+    stop2 = hbus.Stop(index=1, name="Stop 2", type="substation", lat=40.7129, lon=-74.0061)
     graph.add_stop(stop1)
     graph.add_stop(stop2)
 
@@ -148,12 +140,8 @@ def test_get_stops_returns_all_stops():
 
 def test_get_edges_returns_edge_attributes():
     graph = hbus.BusNetworkGraph()
-    stop1 = hbus.Stop(
-        index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-74.0060
-    )
-    stop2 = hbus.Stop(
-        index=1, name="Stop 2", type="substation", lat=40.7129, lon=-74.0061
-    )
+    stop1 = hbus.Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-74.0060)
+    stop2 = hbus.Stop(index=1, name="Stop 2", type="substation", lat=40.7129, lon=-74.0061)
     line = hbus.Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red")
 
     graph.add_stop(stop1)
@@ -166,9 +154,7 @@ def test_get_edges_returns_edge_attributes():
     assert source == stop1
     assert target == stop2
     assert data["line"] == line
-    expected_distance = sqrt(
-        (stop1.lat - stop2.lat) ** 2 + (stop1.lon - stop2.lon) ** 2
-    )
+    expected_distance = sqrt((stop1.lat - stop2.lat) ** 2 + (stop1.lon - stop2.lon) ** 2)
     assert data["distance"] == expected_distance
 
 
@@ -184,9 +170,7 @@ def test_add_line_connects_stops_and_adds_nodes():
         )
         for i in range(3)
     ]
-    line = hbus.Line(
-        index=0, name="Line 1", long_name="Line 1 Long Name", color="red", stops=stops
-    )
+    line = hbus.Line(index=0, name="Line 1", long_name="Line 1 Long Name", color="red", stops=stops)
 
     graph.add_line(line)
 
@@ -200,12 +184,8 @@ def test_add_line_connects_stops_and_adds_nodes():
 
 def test_fully_connected_graph_preserves_edge_data():
     graph = hbus.BusNetworkGraph()
-    stop1 = hbus.Stop(
-        index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-74.0060
-    )
-    stop2 = hbus.Stop(
-        index=1, name="Stop 2", type="substation", lat=40.7129, lon=-74.0061
-    )
+    stop1 = hbus.Stop(index=0, name="Stop 1", type="parent_station", lat=40.7128, lon=-74.0060)
+    stop2 = hbus.Stop(index=1, name="Stop 2", type="substation", lat=40.7129, lon=-74.0061)
 
     graph.add_stop(stop1)
     graph.add_stop(stop2)
