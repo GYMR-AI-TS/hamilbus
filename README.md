@@ -38,6 +38,7 @@ Format your code to ensure consistent style:
 
 ```bash
 black src/ tests/
+
 ```
 
 #### Linting with Ruff

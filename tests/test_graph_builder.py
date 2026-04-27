@@ -1,4 +1,3 @@
-from hamilbus import graph_builder
 from hamilbus.graph_builder import GraphBuilder
 from hamilbus.datamodels import Stop, Line
 from shapely.geometry import LineString
@@ -31,7 +30,7 @@ def test_class_creation_failure_2():
     ]
     lines = ["line1", "line2"]
     try:
-        graph_builder = GraphBuilder(stops, lines)
+        _ = GraphBuilder(stops, lines)
         assert False, "Should have raised TypeError for wrong type of 'lines' parameter"
     except TypeError:
         pass  # Expected behavior
