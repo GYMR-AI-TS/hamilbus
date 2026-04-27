@@ -21,9 +21,9 @@ def parse_stop_id(raw: str) -> int:
         raise ValueError(f"Unknown stop kind: {kind} in {raw}")
 
 
-def load_stops(path: str | Path) -> dict[int, Stop]:
-    """Load stops and returns them as a dict of Stop objects by ids"""
-    stops = {}
+def load_stops(path: str | Path) -> list[Stop]:
+    """Load stops and returns them as a list of Stop objects"""
+    stops = []
     with open(path, encoding="utf-8") as f:
         stops_file = csv.DictReader(f)
         for row in stops_file:
@@ -39,7 +39,7 @@ def load_stops(path: str | Path) -> dict[int, Stop]:
                     else None
                 ),
             )
-            stops[stop.index] = stop
+            stops.append(stop)
     return stops
 
 
@@ -51,10 +51,10 @@ def parse_shape_line_name(raw: str) -> str:
     return last_part.split("_", maxsplit=1)[0]  # 'C1'
 
 
-def load_lines(routes_path: str | Path, shapes_path: str | Path) -> dict[int, Line]:
-    """Load lines and returns them as a dict of Line objects by ids"""
+def load_lines(routes_path: str | Path, shapes_path: str | Path) -> list[Line]:
+    """Load lines and returns them as a list of Line objects"""
     # First pass: read routes.txt
-    lines = {}
+    lines_dict = {}
     name_to_id = {}
     with open(routes_path, encoding="utf-8") as f:
         routes_file = csv.DictReader(f)
@@ -63,9 +63,9 @@ def load_lines(routes_path: str | Path, shapes_path: str | Path) -> dict[int, Li
                 index=num,
                 name=row["route_short_name"],
                 long_name=row["route_long_name"],
-                color=row["route_color"],
+                color="#" + row["route_color"].upper(),
             )
-            lines[line.index] = line
+            lines_dict[line.index] = line
             name_to_id[line.name] = line.index
 
     # Second pass: read shapes.txt
@@ -78,14 +78,15 @@ def load_lines(routes_path: str | Path, shapes_path: str | Path) -> dict[int, Li
             shape_rows.setdefault(line_id, []).append(
                 (
                     int(row["shape_pt_sequence"]),
-                    float(row["shape_pt_lon"]),
                     float(row["shape_pt_lat"]),
+                    float(row["shape_pt_lon"]),
                 )
             )
 
+    # Assemble data from both files
     for line_id, points in shape_rows.items():
         points.sort(key=lambda p: p[0])  # sort by sequence number
-        if line_id in lines:
-            lines[line_id].shape = [(lon, lat) for _, lon, lat in points]
+        if line_id in lines_dict:
+            lines_dict[line_id].shape = [(lat, lon) for _, lat, lon in points]
 
-    return lines
+    return list(lines_dict.values())

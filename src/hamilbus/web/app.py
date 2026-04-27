@@ -23,13 +23,13 @@ def set_network(stops, lines):
 @app.get("/api/stops")
 def api_stops() -> JSONResponse:
     stops, _ = _network
-    return JSONResponse([stop_payload(stop) for stop in stops.values()])
+    return JSONResponse([stop_payload(stop) for stop in stops])
 
 
 @app.get("/api/lines")
 def api_lines() -> JSONResponse:
     _, lines = _network
-    return JSONResponse([line_payload(line) for line in lines.values()])
+    return JSONResponse([line_payload(line) for line in lines])
 
 
 @app.get("/", response_class=HTMLResponse)
