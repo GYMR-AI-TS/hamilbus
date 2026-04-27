@@ -32,12 +32,13 @@ Then open http://127.0.0.1:3000
 
 This project uses the following tools for code quality and testing:
 
-#### Formatting with Black
+#### Formatting with Ruff
 
 Format your code to ensure consistent style:
 
 ```bash
-black src/ tests/
+ruff format src/
+ruff format tests/ --line-length 130
 
 ```
 
@@ -46,13 +47,13 @@ black src/ tests/
 Check for code issues and style violations:
 
 ```bash
-ruff check src/ tests/
+ruff check .
 ```
 
 Fix auto-fixable issues:
 
 ```bash
-ruff check --fix src/ tests/
+ruff check --fix .
 ```
 
 #### Testing with Pytest
@@ -71,9 +72,9 @@ pytest -v
 
 #### Running All Checks
 
-To run all development checks (format, lint, and test):
+To run all development checks (format, lint, test, and import smoke test), matching CI:
 
 ```bash
-black src/ tests/ && ruff check --fix src/ tests/ && pytest
-black src/ tests/ ; ruff check --fix src/ tests/ ; pytest
+ruff format --check src/ && ruff format --check tests/ --line-length 130 && ruff check . && pytest && python -c "import hamilbus; print('Import successful')"
+ruff format --check src/ ; ruff format --check tests/ --line-length 130 ; ruff check . ; pytest ; python -c "import hamilbus; print('Import successful')"
 ```
