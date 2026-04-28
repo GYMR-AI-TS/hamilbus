@@ -23,6 +23,7 @@ class GraphBuilder:
         self.trips_by_lines = trips_by_lines
         self.stops_by_trips = stops_by_trips
         self.merged_stops = None
+        self.stop_id_to_centroid = None
 
     def merge_stops(self) -> list[Stop]:
         """Merge stops that are parent stations/substations of each others"""
@@ -34,6 +35,7 @@ class GraphBuilder:
                 grouped[stop.parent_station_id].append(stop)
 
         merged_stops = []
+        stop_id_to_centroid = {}
         for _, group in tqdm(
             grouped.items(), desc=f"Merging parent stations and substations", unit=" group of stops"
         ):
@@ -56,28 +58,27 @@ class GraphBuilder:
                 lines=centroid_lines,
             )
             merged_stops.append(centroid_stop)
+            for stop in group : 
+                stop_id_to_centroid[stop.id] = centroid_stop
         self.merged_stops = merged_stops
+        self.stop_id_to_centroid = stop_id_to_centroid
         return merged_stops
 
-    def build_new_graph(self) -> BusNetworkGraph:
+    def build_graph(self) -> BusNetworkGraph:
         graph = BusNetworkGraph()
-        stops_by_idx = {stop.id: stop for stop in self.stops}
-        merged_stops_by_name = {stop.: stop for stop in self.merged_stops}
         for line in tqdm(self.lines, desc="Treating a line", unit="line"):
             for trip in self.trips_by_lines.get(line.index, []):
                 trip_stops = self.stops_by_trips.get(trip, [])
-                for stop_idx_1, stop_idx_2 in zip(trip_stops, trip_stops[1:]):
+                for stop_id_1, stop_id_2 in zip(trip_stops, trip_stops[1:]):
                     # Dedupe stops : get the corresponding centroid by name
-                    stop1 = stops_by_idx[stop_idx_1]
-                    stop2 = stops_by_idx[stop_idx_2]
-                    stop1 = merged_stops_by_name[stop1.name]
-                    stop2 = merged_stops_by_name[stop2.name]
+                    stop1 = self.stop_id_to_centroid[stop_id_1]
+                    stop2 = self.stop_id_to_centroid[stop_id_2]
                     # Populate line.stops
                     line.stops.append(stop1)
                     line.stops.append(stop2)
                     # Add nodes and edge
                     graph.add_stop(stop1)
                     graph.add_stop(stop2)
-                    if not graph.has_edge(stop1.id, stop2.index):
+                    if not graph.has_edge(stop1.id, stop2.id):
                         graph.add_edge(stop1, stop2, line)
         return graph
