@@ -136,3 +136,25 @@ class GraphBuilder:
         for line in self.lines:
             graph.add_line(line)
         return graph
+
+    def build_new_graph(self, stops, merged_stops, lines, trips_by_lines, stops_by_trips) -> BusNetworkGraph:
+        graph = BusNetworkGraph()
+        stops_by_idx = {stop.index: stop for stop in stops}
+        merged_stops_by_name = {stop.name: stop for stop in merged_stops}
+        for line in tqdm(lines, desc="Treating a line", unit="line"):
+            for trip in trips_by_lines.get(line.index, []):
+                trip_stops = stops_by_trips.get(trip, [])
+                for stop_idx_1, stop_idx_2 in zip(trip_stops, trip_stops[1:]):
+                    # Dedupe stops : get the corresponding centroid by name
+                    stop1 = stops_by_idx[stop_idx_1]
+                    stop2 = stops_by_idx[stop_idx_2]
+                    stop1 = merged_stops_by_name[stop1.name]
+                    stop2 = merged_stops_by_name[stop2.name]
+                    # Populate line.stops
+                    line.stops.append(stop1)
+                    line.stops.append(stop2)
+                    # Add nodes and edge
+                    graph.add_stop(stop1)
+                    graph.add_stop(stop2)
+                    graph.add_edge(stop1, stop2, line)
+        return graph
