@@ -48,11 +48,9 @@ def parse_shape_line_name(raw: str) -> str:
     return last_part.split("_", maxsplit=1)[0]  # 'C1'
 
 
-def load_lines(routes_path: str | Path, shapes_path: str | Path) -> list[Line]:
+def load_lines(routes_path: str | Path) -> list[Line]:
     """Load lines and returns them as a list of Line objects"""
-    # First pass: read routes.txt
-    lines_dict = {}
-    name_to_id = {}
+    lines = []
     with open(routes_path, encoding="utf-8") as f:
         routes_file = csv.DictReader(f)
         for row in routes_file:
@@ -62,30 +60,8 @@ def load_lines(routes_path: str | Path, shapes_path: str | Path) -> list[Line]:
                 long_name=row["route_long_name"],
                 color="#" + row["route_color"].upper(),
             )
-            lines_dict[line.id] = line
-            name_to_id[line.name] = line.id
-    # Second pass: read shapes.txt
-    shape_rows: dict[int, list[tuple[int, float, float]]] = {}
-    with open(shapes_path, encoding="utf-8") as f:
-        shapes_file = csv.DictReader(f)
-        for row in shapes_file:
-            line_name = parse_shape_line_name(row["shape_id"])
-            line_id = name_to_id[line_name]
-            shape_rows.setdefault(line_id, []).append(
-                (
-                    int(row["shape_pt_sequence"]),
-                    float(row["shape_pt_lat"]),
-                    float(row["shape_pt_lon"]),
-                )
-            )
-
-    # Assemble data from both files
-    for line_id, points in shape_rows.items():
-        #points.sort(key=lambda p: p[0])  # sort by sequence number
-        if line_id in lines_dict:
-            lines_dict[line_id].shape = [(lat, lon) for _, lat, lon in points]
-
-    return list(lines_dict.values())
+            lines.append(line)
+    return lines
 
 
 def load_lines_trips(trips_path: str | Path) -> dict[str, list[str]]:
