@@ -21,40 +21,39 @@ class GraphBuilder:
         self.stops = stops
         self.lines = lines
 
-    def merge_stops(self, strategy: str = "name") -> list[Stop]:
-        """Merge stops using a chosen Stop attribute (defaults to name)."""
+    def merge_stops(self) -> list[Stop]:
+        """Merge stops that are parent stations/substations of each others"""
         grouped = defaultdict(list)
         for stop in self.stops:
-            # grouped = {"stopName" : [all stops with that name], ...}
-            if not hasattr(stop, strategy):
-                raise ValueError(f"Invalid merge strategy '{strategy}' for Stop")
-            grouped[getattr(stop, strategy)].append(stop)
+            if stop.type == "parent_station":
+                grouped[stop.id].append(stop)
+            else :
+                grouped[stop.parent_station_id].append(stop)
+
         merged_stops = []
         for _, group in tqdm(
-            grouped.items(), desc=f"Merging stops by {strategy}", unit="group of stops"
+            grouped.items(), desc=f"Merging parent stations and substations", unit=" group of stops"
         ):
             centroid_lat = sum(stop.lat for stop in group) / len(group)
             centroid_lon = sum(stop.lon for stop in group) / len(group)
             centroid_lines = []
-            idx = group[0].index
-            # Keep a human-readable stop name, even if merge strategy is not "name".
-            centroid_name = Counter(stop.name for stop in group).most_common(1)[0][0]
+            id, name = group[0].id, group[0].name
             for stop in group:
                 centroid_lines += [
                     line for line in stop.lines if line not in centroid_lines
                 ]
                 if stop.type == "parent_station":
-                    idx = stop.index
+                    id, name = stop.id, stop.name
             centroid_stop = Stop(
-                index=idx,#(idx % 1_000_000 + 3_000_000),
-                name=centroid_name,
+                id=id,
+                name=name,
                 type="centroid",
                 lat=centroid_lat,
                 lon=centroid_lon,
                 lines=centroid_lines,
-                parent_station_idx=None,
             )
             merged_stops.append(centroid_stop)
+        self.merged_stops = merged_stops
         return merged_stops
 
     def build_new_graph(self, stops, merged_stops, lines, trips_by_lines, stops_by_trips) -> BusNetworkGraph:
