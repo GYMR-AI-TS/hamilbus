@@ -1,10 +1,9 @@
 ### datamodels.py
 ### Defines the dataclasses for storing stops and lines info
 
+import networkx as nx
 from typing import Optional, List
 from dataclasses import dataclass, field
-import networkx as nx
-from math import sqrt
 
 
 @dataclass
@@ -43,7 +42,6 @@ class BusNetworkGraph:
             stop1.index,
             stop2.index,
             line=line,
-            distance=sqrt((stop1.lat - stop2.lat) ** 2 + (stop1.lon - stop2.lon) ** 2),
         )
 
     def add_line(self, line: Line):
@@ -63,6 +61,9 @@ class BusNetworkGraph:
             (self.graph.nodes[u]["stop"], self.graph.nodes[v]["stop"], data)
             for u, v, data in self.graph.edges(data=True)
         ]
+
+    def has_edge(self, u, v):
+        return self.graph.has_edge(u, v)
 
     def fully_connected_graph(self) -> nx.Graph:
         """Returns a fully connected graph where each edge weight is the shortest distance between stops."""
