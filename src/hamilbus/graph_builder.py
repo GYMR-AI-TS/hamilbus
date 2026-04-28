@@ -2,9 +2,7 @@
 ### Builds a graph from the raw data
 
 from tqdm import tqdm
-from pyproj import Transformer
 from collections import defaultdict, Counter
-from shapely.geometry import Point, LineString
 from hamilbus.datamodels import Stop, Line, BusNetworkGraph
 
 
@@ -22,54 +20,6 @@ class GraphBuilder:
             raise TypeError("'lines' must be a list of Line objects.")
         self.stops = stops
         self.lines = lines
-        self.transformer = Transformer.from_crs(
-            "EPSG:4326", "EPSG:2154", always_xy=True
-        )
-        self._line_shapes: dict[
-            int, tuple[LineString, tuple[float, float, float, float]]
-        ] = {}
-        self._build_lines()
-
-    def _build_lines(self) -> None:
-        """Project line shapes once and cache their linestrings/bounds."""
-        for line in tqdm(
-            self.lines, desc="Computing and storing lines projections", unit="line"
-        ):
-            shape_projected = [
-                self.transformer.transform(coords[1], coords[0])
-                for coords in line.shape
-            ]
-            linestring = LineString(shape_projected)
-            self._line_shapes[line.index] = (linestring, linestring.bounds)
-
-    def determine_belonging(
-        self, stop: Stop, line: Line, threshold: float = 50
-    ) -> bool:
-        """Determine if a stop belongs to a line by checking if it is close enough"""
-        stop_projected = Point(self.transformer.transform(stop.lon, stop.lat))
-        linestring, bounds = self._line_shapes[line.index]
-        min_x, min_y, max_x, max_y = bounds
-        # Check if the stop belongs in the Line's bounding box + threshold
-        if not (
-            min_x - threshold <= stop_projected.x <= max_x + threshold
-            and min_y - threshold <= stop_projected.y <= max_y + threshold
-        ):
-            return False
-        # Only if it does, calculate its distance to the line to determine belonging
-        distance = stop_projected.distance(linestring)
-        if distance < threshold:
-            # We populate stop.lines but line.stops will come after deduping stops
-            if line not in stop.lines:
-                stop.lines.append(line)
-            return True
-        else:
-            return False
-
-    def assign_stops_to_lines(self, threshold: float = 50) -> None:
-        """Populate each stop with all nearby lines using cached shapes."""
-        for stop in tqdm(self.stops, desc="Assigning stops to lines", unit="stop"):
-            for line in self.lines:
-                self.determine_belonging(stop, line, threshold=threshold)
 
     def merge_stops(self, strategy: str = "name") -> list[Stop]:
         """Merge stops using a chosen Stop attribute (defaults to name)."""
@@ -96,7 +46,7 @@ class GraphBuilder:
                 if stop.type == "parent_station":
                     idx = stop.index
             centroid_stop = Stop(
-                index=(idx % 1_000_000 + 3_000_000),
+                index=idx,#(idx % 1_000_000 + 3_000_000),
                 name=centroid_name,
                 type="centroid",
                 lat=centroid_lat,
@@ -106,36 +56,6 @@ class GraphBuilder:
             )
             merged_stops.append(centroid_stop)
         return merged_stops
-
-    def order_stops(self):
-        """Populate line.stops with ordered stops for all lines associated to a stop"""
-        grouped = defaultdict(list)
-        for stop in self.stops:
-            for line in stop.lines:
-                grouped[line.index].append(stop)  # {line : [list of stops], ...}
-
-        for line_index, group in tqdm(
-            grouped.items(), desc="Ordering stops along the lines", unit="line"
-        ):
-            shape_projected = self._line_shapes[line_index][0]
-            stop_positions = []
-            # Project each stop onto the line and get its position along the route
-            for stop in group:
-                stop_projected = Point(self.transformer.transform(stop.lon, stop.lat))
-                position = shape_projected.project(stop_projected, normalized=True)
-                stop_positions.append((position, stop))
-
-            # Sort by position along the route → this is the stop order
-            stop_positions.sort(key=lambda x: x[0])
-            ordered_stops = [stop for _, stop in stop_positions]
-            line.stops = ordered_stops
-
-    def build_graph(self) -> BusNetworkGraph:
-        """Builds a BusNetworkGraph object from a list of Line objects with ordered stops"""
-        graph = BusNetworkGraph()
-        for line in self.lines:
-            graph.add_line(line)
-        return graph
 
     def build_new_graph(self, stops, merged_stops, lines, trips_by_lines, stops_by_trips) -> BusNetworkGraph:
         graph = BusNetworkGraph()
@@ -156,5 +76,6 @@ class GraphBuilder:
                     # Add nodes and edge
                     graph.add_stop(stop1)
                     graph.add_stop(stop2)
-                    graph.add_edge(stop1, stop2, line)
+                    if not graph.has_edge(stop1.index, stop2.index):
+                        graph.add_edge(stop1, stop2, line)
         return graph
