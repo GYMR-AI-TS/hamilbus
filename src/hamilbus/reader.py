@@ -13,14 +13,14 @@ def load_stops(path: str | Path) -> list[Stop]:
     stops = []
     with open(path, encoding="utf-8") as f:
         stops_file = csv.DictReader(f)
-        for row in stops_file:
+        for row in tqdm(stops_file, desc="Reading stops in stops.txt", unit=" stops"):
             stop = Stop(
                 id=row["stop_id"],
                 name=row["stop_name"],
                 type="substation" if row.get("parent_station") else "parent_station",
                 lat=float(row["stop_lat"]),
                 lon=float(row["stop_lon"]),
-                parent_station_idx=row["parent_station"] if row.get("parent_station") else None
+                parent_station_id=row["parent_station"] if row.get("parent_station") else None
             )
             stops.append(stop)
     return stops
@@ -31,7 +31,7 @@ def load_lines(routes_path: str | Path) -> list[Line]:
     lines = []
     with open(routes_path, encoding="utf-8") as f:
         routes_file = csv.DictReader(f)
-        for row in routes_file:
+        for row in tqdm(routes_file, desc="Reading lines in routes.txt", unit=" lines"):
             line = Line(
                 id=row["route_id"],
                 name=row["route_short_name"],
@@ -46,7 +46,7 @@ def load_lines_trips(trips_path: str | Path) -> dict[str, list[str]]:
     with open(trips_path, encoding="utf-8") as f:
         trips_file = csv.DictReader(f)
         trips_by_lines = defaultdict(list)
-        for row in tqdm(trips_file, desc="Reading trips", unit="row"):
+        for row in tqdm(trips_file, desc="Reading trips in trips.txt", unit=" rows"):
             trips_by_lines[row["route_id"]].append(row["trip_id"])
     return trips_by_lines
 
@@ -55,6 +55,6 @@ def load_trips_stops(stop_times_path: str | Path) -> dict[str, list[str]]:
     with open(stop_times_path, encoding="utf-8") as f:
         stop_times_file = csv.DictReader(f)
         stops_by_trips = defaultdict(list)
-        for row in tqdm(stop_times_file, desc="Reading trips stops", unit="trip"):
+        for row in tqdm(stop_times_file, desc="Reading trips stops in stop_times.txt", unit=" trips"):
             stops_by_trips[row["trip_id"]].append(row["stop_id"])
     return stops_by_trips

@@ -66,9 +66,9 @@ class GraphBuilder:
 
     def build_graph(self) -> BusNetworkGraph:
         graph = BusNetworkGraph()
-        for line in tqdm(self.lines, desc="Treating a line", unit="line"):
-            for trip in self.trips_by_lines.get(line.index, []):
-                trip_stops = self.stops_by_trips.get(trip, [])
+        for line in tqdm(self.lines, desc="Creating the graph", unit=" lines"):
+            for trip_id in self.trips_by_lines.get(line.id, []):
+                trip_stops = self.stops_by_trips.get(trip_id, [])
                 for stop_id_1, stop_id_2 in zip(trip_stops, trip_stops[1:]):
                     # Dedupe stops : get the corresponding centroid by name
                     stop1 = self.stop_id_to_centroid[stop_id_1]

@@ -34,13 +34,13 @@ class BusNetworkGraph:
 
     def add_stop(self, stop: Stop):
         """Adds a stop to the graph."""
-        self.graph.add_node(stop.index, stop=stop)
+        self.graph.add_node(stop.id, stop=stop)
 
     def add_edge(self, stop1: Stop, stop2: Stop, line: Line):
         """Adds an edge between two stops, with the line as an attribute."""
         self.graph.add_edge(
-            stop1.index,
-            stop2.index,
+            stop1.id,
+            stop2.id,
             line=line,
         )
 
@@ -69,7 +69,7 @@ class BusNetworkGraph:
         """Returns a fully connected graph where each edge weight is the shortest distance between stops."""
         fully_connected = nx.Graph()
         for stop in self.get_stops():
-            fully_connected.add_node(stop.index, stop=stop)
+            fully_connected.add_node(stop.id, stop=stop)
 
         for u in fully_connected.nodes:
             for v in fully_connected.nodes:
@@ -77,11 +77,11 @@ class BusNetworkGraph:
                     stop_u = self.graph.nodes[u]["stop"]
                     stop_v = self.graph.nodes[v]["stop"]
                     line = Line(
-                        index=-1,
+                        id=-1,
                         name="Direct Connection",
                         long_name="Direct Connection",
                         color="gray",
                     )
-                    fully_connected.add_edge(stop_u.index, stop_v.index, line=line)
+                    fully_connected.add_edge(stop_u.id, stop_v.id, line=line)
 
         return fully_connected

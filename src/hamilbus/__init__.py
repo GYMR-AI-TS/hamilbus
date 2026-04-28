@@ -1,6 +1,6 @@
 from . import reader
 from .datamodels import BusNetworkGraph, Line, Stop
-from .reader import load_lines, load_stops, parse_stop_id
+from .reader import load_lines, load_stops, load_lines_trips, load_trips_stops
 from .web import app, run_server
 
 __all__ = [
@@ -10,7 +10,8 @@ __all__ = [
     "reader",
     "load_lines",
     "load_stops",
-    "parse_stop_id",
+    "load_lines_trips",
+    "load_trips_stops",
     "app",
     "run_server",
 ]
