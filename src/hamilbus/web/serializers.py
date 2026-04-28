@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any
+from itertools import groupby
 
 from ..datamodels import Line, Stop
 
@@ -32,3 +33,24 @@ def line_payload(line: Line) -> dict[str, Any]:
         "color": line.color or "#3388ff",
         "shape": shape,
     }
+
+def graph_lines_payload(edges: list[tuple]) -> list[dict[str, Any]]:
+    """Group edges by line and return one entry per line with multiple segments."""
+    # Group by line index (fall back to line name if index missing)
+    grouped: dict[Any, dict] = {}
+    for stop1, stop2, data in edges:
+        line = data.get("line")
+        key = line.index if line else -1
+        if key not in grouped:
+            grouped[key] = {
+                "index": key,
+                "name": line.name if line else "Edge",
+                "long_name": line.long_name if line else "",
+                "color": (line.color if line and line.color else None) or "#3388ff",
+                "segments": [],
+            }
+        grouped[key]["segments"].append([
+            {"lat": stop1.lat, "lon": stop1.lon},
+            {"lat": stop2.lat, "lon": stop2.lon},
+        ])
+    return list(grouped.values())
