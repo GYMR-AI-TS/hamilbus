@@ -9,7 +9,7 @@ from hamilbus.datamodels import Stop, Line, BusNetworkGraph
 class GraphBuilder:
     """Class to handle the operations to build to a graph from Stop and Line objects lists"""
 
-    def __init__(self, stops: list[Stop] | None, lines: list[Line] | None):
+    def __init__(self, stops: list[Stop] | None, lines: list[Line] | None, trips_by_lines: dict[str, list[str]] | None, stops_by_trips: dict[str, list[str]] | None) -> None:
         if stops is None:
             raise ValueError("'stops' cannot be None; pass a list[Stop].")
         if lines is None:
@@ -20,6 +20,9 @@ class GraphBuilder:
             raise TypeError("'lines' must be a list of Line objects.")
         self.stops = stops
         self.lines = lines
+        self.trips_by_lines = trips_by_lines
+        self.stops_by_trips = stops_by_trips
+        self.merged_stops = None
 
     def merge_stops(self) -> list[Stop]:
         """Merge stops that are parent stations/substations of each others"""
@@ -56,13 +59,13 @@ class GraphBuilder:
         self.merged_stops = merged_stops
         return merged_stops
 
-    def build_new_graph(self, stops, merged_stops, lines, trips_by_lines, stops_by_trips) -> BusNetworkGraph:
+    def build_new_graph(self) -> BusNetworkGraph:
         graph = BusNetworkGraph()
-        stops_by_idx = {stop.index: stop for stop in stops}
-        merged_stops_by_name = {stop.name: stop for stop in merged_stops}
-        for line in tqdm(lines, desc="Treating a line", unit="line"):
-            for trip in trips_by_lines.get(line.index, []):
-                trip_stops = stops_by_trips.get(trip, [])
+        stops_by_idx = {stop.id: stop for stop in self.stops}
+        merged_stops_by_name = {stop.: stop for stop in self.merged_stops}
+        for line in tqdm(self.lines, desc="Treating a line", unit="line"):
+            for trip in self.trips_by_lines.get(line.index, []):
+                trip_stops = self.stops_by_trips.get(trip, [])
                 for stop_idx_1, stop_idx_2 in zip(trip_stops, trip_stops[1:]):
                     # Dedupe stops : get the corresponding centroid by name
                     stop1 = stops_by_idx[stop_idx_1]
@@ -75,6 +78,6 @@ class GraphBuilder:
                     # Add nodes and edge
                     graph.add_stop(stop1)
                     graph.add_stop(stop2)
-                    if not graph.has_edge(stop1.index, stop2.index):
+                    if not graph.has_edge(stop1.id, stop2.index):
                         graph.add_edge(stop1, stop2, line)
         return graph

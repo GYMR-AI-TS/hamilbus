@@ -51,7 +51,7 @@ def load_lines_trips(trips_path: str | Path) -> dict[str, list[str]]:
     return trips_by_lines
 
 
-def load_trips_stops(stop_times_path: str | Path):
+def load_trips_stops(stop_times_path: str | Path) -> dict[str, list[str]]:
     with open(stop_times_path, encoding="utf-8") as f:
         stop_times_file = csv.DictReader(f)
         stops_by_trips = defaultdict(list)
