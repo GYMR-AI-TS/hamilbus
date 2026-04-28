@@ -3,6 +3,7 @@
 
 import csv
 from pathlib import Path
+from collections import defaultdict
 from hamilbus.datamodels import Stop, Line
 
 
@@ -85,8 +86,26 @@ def load_lines(routes_path: str | Path, shapes_path: str | Path) -> list[Line]:
 
     # Assemble data from both files
     for line_id, points in shape_rows.items():
-        points.sort(key=lambda p: p[0])  # sort by sequence number
+        #points.sort(key=lambda p: p[0])  # sort by sequence number
         if line_id in lines_dict:
             lines_dict[line_id].shape = [(lat, lon) for _, lat, lon in points]
 
     return list(lines_dict.values())
+
+
+def load_lines_trips(trips_path: str | Path) -> dict[str, list[str]]:
+    with open(trips_path, encoding="utf-8") as f:
+        trips_file = csv.DictReader(f)
+        trips_by_lines = defaultdict(list)
+        for row in trips_file:
+            trips_by_lines[row["route_id"]].append(row["trip_id"])
+    return trips_by_lines
+
+
+def load_trips_stops(stop_times_path: str | Path):
+    with open(stop_times_path, encoding="utf-8") as f:
+        stop_times_file = csv.DictReader(f)
+        stops_by_trips = defaultdict(list)
+        for row in stop_times_file:
+            stops_by_trips[row["trip_id"]].append(row["stop_id"])
+    return stops_by_trips
