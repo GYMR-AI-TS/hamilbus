@@ -1,7 +1,7 @@
 from pathlib import Path
 import hamilbus.reader as reader
 from hamilbus.graph_builder import GraphBuilder
-from hamilbus.web import run_server, set_network, set_graph
+from hamilbus.web import run_server, set_graph
 
 
 def main() -> None:

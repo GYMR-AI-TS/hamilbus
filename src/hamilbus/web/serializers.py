@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import Any
-from itertools import groupby
 
 from ..datamodels import Line, Stop
 
