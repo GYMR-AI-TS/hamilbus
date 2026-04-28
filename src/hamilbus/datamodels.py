@@ -9,7 +9,7 @@ from math import sqrt
 
 @dataclass
 class Stop:
-    index: int
+    id: str
     name: str
     type: str  # parent_station, substation, or centroid
     lat: float
@@ -20,7 +20,7 @@ class Stop:
 
 @dataclass
 class Line:
-    index: int
+    id: str
     name: str
     long_name: str
     color: str

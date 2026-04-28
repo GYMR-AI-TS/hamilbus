@@ -29,16 +29,12 @@ def load_stops(path: str | Path) -> list[Stop]:
         stops_file = csv.DictReader(f)
         for row in stops_file:
             stop = Stop(
-                index=parse_stop_id(row["stop_id"]),
+                id=row["stop_id"],
                 name=row["stop_name"],
                 type="substation" if row.get("parent_station") else "parent_station",
                 lat=float(row["stop_lat"]),
                 lon=float(row["stop_lon"]),
-                parent_station_idx=(
-                    parse_stop_id(row["parent_station"])
-                    if row.get("parent_station")
-                    else None
-                ),
+                parent_station_idx=row["parent_station"] if row.get("parent_station") else None
             )
             stops.append(stop)
     return stops
@@ -59,16 +55,15 @@ def load_lines(routes_path: str | Path, shapes_path: str | Path) -> list[Line]:
     name_to_id = {}
     with open(routes_path, encoding="utf-8") as f:
         routes_file = csv.DictReader(f)
-        for num, row in enumerate(routes_file):
+        for row in routes_file:
             line = Line(
-                index=num,
+                id=row["route_id"],
                 name=row["route_short_name"],
                 long_name=row["route_long_name"],
                 color="#" + row["route_color"].upper(),
             )
-            lines_dict[line.index] = line
-            name_to_id[line.name] = line.index
-
+            lines_dict[line.id] = line
+            name_to_id[line.name] = line.id
     # Second pass: read shapes.txt
     shape_rows: dict[int, list[tuple[int, float, float]]] = {}
     with open(shapes_path, encoding="utf-8") as f:
