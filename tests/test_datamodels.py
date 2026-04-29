@@ -1,4 +1,3 @@
-from math import sqrt
 from pathlib import Path
 import hamilbus as hbus
 import networkx as nx

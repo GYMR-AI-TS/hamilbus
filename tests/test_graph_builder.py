@@ -1,7 +1,5 @@
 from hamilbus.graph_builder import GraphBuilder
 from hamilbus.datamodels import Stop, Line
-from shapely.geometry import LineString
-import pytest
 
 
 def test_class_creation():
