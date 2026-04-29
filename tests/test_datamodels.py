@@ -7,6 +7,7 @@ DATA_DIR = Path(__file__).resolve().parents[1] / "src" / "hamilbus" / "data"
 STOPS_PATH = DATA_DIR / "stops.txt"
 ROUTES_PATH = DATA_DIR / "routes.txt"
 
+
 # Tests for reader.py, using the dataclasses
 def test_stops_number():
     stops = hbus.reader.load_stops(STOPS_PATH)
