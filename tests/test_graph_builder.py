@@ -100,7 +100,7 @@ def test_build_graph():
     assert graph.get_edges()[1][1].id == "2"
 
 
-def count_unique_values(d:dict):
+def count_unique_values(d: dict):
     """Helper to count unique values of a dict with unhashable values like Stops"""
     unique = []
     for v in d.values():
@@ -132,7 +132,7 @@ def test_build_graph_after_merge_stops():
         "trip0": ["0", "2", "4"],  # 2 new edges
         "trip1": ["1", "3", "5"],  # Same as trip0, 0 new edges
         "trip2": ["1", "4"],  # 1 new edge
-        "trip3": ["4", "3", "2", "1", "0"]  # 2 new self-edges
+        "trip3": ["4", "3", "2", "1", "0"],  # 2 new self-edges
     }
     graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips)
     assert count_unique_values(graph_builder.stop_id_to_centroid) == 6

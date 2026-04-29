@@ -21,9 +21,13 @@ class GraphBuilder:
         if lines is None:
             raise ValueError("'lines' cannot be None; pass a list[Line].")
         if trips_by_lines is None:
-            raise ValueError("'trips_by_lines' cannot be None; pass a dict[str, list[str]].")
+            raise ValueError(
+                "'trips_by_lines' cannot be None; pass a dict[str, list[str]]."
+            )
         if stops_by_trips is None:
-            raise ValueError("'stops_by_trips' cannot be None; pass a dict[str, list[str]].")
+            raise ValueError(
+                "'stops_by_trips' cannot be None; pass a dict[str, list[str]]."
+            )
         if not isinstance(stops, list) or any(not isinstance(x, Stop) for x in stops):
             raise TypeError("'stops' must be a list of Stop objects.")
         if not isinstance(lines, list) or any(not isinstance(x, Line) for x in lines):
