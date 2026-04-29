@@ -39,8 +39,24 @@ class GraphBuilder:
         self.merged_stops = None
         self.stop_id_to_centroid = {s.id: s for s in self.stops}
 
-    def merge_stops(self) -> list[Stop]:
-        """Merge stops that are parent stations/substations of each others"""
+    def merge_stops(self, centroid_strategy: bool = True) -> list[Stop]:
+        """Merge stops that are parent stations/substations of each others
+           Or only keep parent stations if centroid_strategy=False"""
+        if not centroid_strategy:
+            new_stops = []
+            stop_id_to_centroid = defaultdict(list)
+            for stop in self.stops:
+                if stop.type == "parent_station":
+                    new_stops.append(stop)
+                    stop_id_to_centroid[stop.id] = stop
+            self.merged_stops = new_stops
+            parent_id_to_stop = {s.id: s for s in new_stops}
+            for stop in self.stops:
+                if stop.type != "parent_station":
+                    stop_id_to_centroid[stop.id] = parent_id_to_stop[stop.parent_station_id]
+            self.stop_id_to_centroid = stop_id_to_centroid
+            return merged_stops
+
         grouped = defaultdict(list)
         for stop in self.stops:
             if stop.type == "parent_station":
