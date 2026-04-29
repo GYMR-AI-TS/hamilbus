@@ -2,7 +2,7 @@
 ### Builds a graph from the raw data
 
 from tqdm import tqdm
-from collections import defaultdict, Counter
+from collections import defaultdict
 from hamilbus.datamodels import Stop, Line, BusNetworkGraph
 
 
@@ -37,7 +37,7 @@ class GraphBuilder:
         merged_stops = []
         stop_id_to_centroid = {}
         for _, group in tqdm(
-            grouped.items(), desc=f"Merging parent stations and substations", unit=" group of stops"
+            grouped.items(), desc="Merging parent stations and substations", unit=" group of stops"
         ):
             centroid_lat = sum(stop.lat for stop in group) / len(group)
             centroid_lon = sum(stop.lon for stop in group) / len(group)
