@@ -81,10 +81,14 @@ class GraphBuilder:
                     stop1 = self.stop_id_to_centroid[stop_id_1]
                     stop2 = self.stop_id_to_centroid[stop_id_2]
                     # Populate line.stops and stop.lines
-                    line.stops.append(stop1)
-                    line.stops.append(stop2)
-                    stop1.lines.append(line)
-                    stop2.lines.append(line)
+                    if stop1 not in line.stops:
+                        line.stops.append(stop1)
+                    if stop2 not in line.stops:
+                        line.stops.append(stop2)
+                    if line not in stop1.lines:
+                        stop1.lines.append(line)
+                    if line not in stop2.lines:
+                        stop2.lines.append(line)
                     # Add nodes and edge
                     graph.add_stop(stop1)
                     graph.add_stop(stop2)
