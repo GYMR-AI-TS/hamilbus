@@ -29,7 +29,7 @@ class GraphBuilder:
         self.trips_by_lines = trips_by_lines
         self.stops_by_trips = stops_by_trips
         self.merged_stops = None
-        self.stop_id_to_centroid = None
+        self.stop_id_to_centroid = {s.id:s for s in self.stops}
 
     def merge_stops(self) -> list[Stop]:
         """Merge stops that are parent stations/substations of each others"""
