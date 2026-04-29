@@ -20,7 +20,9 @@ def load_stops(path: str | Path) -> list[Stop]:
                 type="substation" if row.get("parent_station") else "parent_station",
                 lat=float(row["stop_lat"]),
                 lon=float(row["stop_lon"]),
-                parent_station_id=row["parent_station"] if row.get("parent_station") else None
+                parent_station_id=row["parent_station"]
+                if row.get("parent_station")
+                else None,
             )
             stops.append(stop)
     return stops
@@ -55,6 +57,8 @@ def load_trips_stops(stop_times_path: str | Path) -> dict[str, list[str]]:
     with open(stop_times_path, encoding="utf-8") as f:
         stop_times_file = csv.DictReader(f)
         stops_by_trips = defaultdict(list)
-        for row in tqdm(stop_times_file, desc="Reading trips stops in stop_times.txt", unit=" trips"):
+        for row in tqdm(
+            stop_times_file, desc="Reading trips stops in stop_times.txt", unit=" trips"
+        ):
             stops_by_trips[row["trip_id"]].append(row["stop_id"])
     return stops_by_trips

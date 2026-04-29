@@ -9,7 +9,13 @@ from hamilbus.datamodels import Stop, Line, BusNetworkGraph
 class GraphBuilder:
     """Class to handle the operations to build to a graph from Stop and Line objects lists"""
 
-    def __init__(self, stops: list[Stop] | None, lines: list[Line] | None, trips_by_lines: dict[str, list[str]] | None, stops_by_trips: dict[str, list[str]] | None) -> None:
+    def __init__(
+        self,
+        stops: list[Stop] | None,
+        lines: list[Line] | None,
+        trips_by_lines: dict[str, list[str]] | None,
+        stops_by_trips: dict[str, list[str]] | None,
+    ) -> None:
         if stops is None:
             raise ValueError("'stops' cannot be None; pass a list[Stop].")
         if lines is None:
@@ -31,13 +37,15 @@ class GraphBuilder:
         for stop in self.stops:
             if stop.type == "parent_station":
                 grouped[stop.id].append(stop)
-            else :
+            else:
                 grouped[stop.parent_station_id].append(stop)
 
         merged_stops = []
         stop_id_to_centroid = {}
         for _, group in tqdm(
-            grouped.items(), desc="Merging parent stations and substations", unit=" group of stops"
+            grouped.items(),
+            desc="Merging parent stations and substations",
+            unit=" group of stops",
         ):
             centroid_lat = sum(stop.lat for stop in group) / len(group)
             centroid_lon = sum(stop.lon for stop in group) / len(group)
@@ -58,7 +66,7 @@ class GraphBuilder:
                 lines=centroid_lines,
             )
             merged_stops.append(centroid_stop)
-            for stop in group : 
+            for stop in group:
                 stop_id_to_centroid[stop.id] = centroid_stop
         self.merged_stops = merged_stops
         self.stop_id_to_centroid = stop_id_to_centroid
