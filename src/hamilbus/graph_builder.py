@@ -20,6 +20,10 @@ class GraphBuilder:
             raise ValueError("'stops' cannot be None; pass a list[Stop].")
         if lines is None:
             raise ValueError("'lines' cannot be None; pass a list[Line].")
+        if trips_by_lines is None:
+            raise ValueError("'trips_by_lines' cannot be None; pass a dict[str, list[str]].")
+        if stops_by_trips is None:
+            raise ValueError("'stops_by_trips' cannot be None; pass a dict[str, list[str]].")
         if not isinstance(stops, list) or any(not isinstance(x, Stop) for x in stops):
             raise TypeError("'stops' must be a list of Stop objects.")
         if not isinstance(lines, list) or any(not isinstance(x, Line) for x in lines):
@@ -49,12 +53,8 @@ class GraphBuilder:
         ):
             centroid_lat = sum(stop.lat for stop in group) / len(group)
             centroid_lon = sum(stop.lon for stop in group) / len(group)
-            centroid_lines = []
             id, name = group[0].id, group[0].name
             for stop in group:
-                centroid_lines += [
-                    line for line in stop.lines if line not in centroid_lines
-                ]
                 if stop.type == "parent_station":
                     id, name = stop.id, stop.name
             centroid_stop = Stop(
@@ -63,7 +63,6 @@ class GraphBuilder:
                 type="centroid",
                 lat=centroid_lat,
                 lon=centroid_lon,
-                lines=centroid_lines,
             )
             merged_stops.append(centroid_stop)
             for stop in group:
@@ -81,9 +80,11 @@ class GraphBuilder:
                     # Dedupe stops : get the corresponding centroid by name
                     stop1 = self.stop_id_to_centroid[stop_id_1]
                     stop2 = self.stop_id_to_centroid[stop_id_2]
-                    # Populate line.stops
+                    # Populate line.stops and stop.lines
                     line.stops.append(stop1)
                     line.stops.append(stop2)
+                    stop1.lines.append(line)
+                    stop2.lines.append(line)
                     # Add nodes and edge
                     graph.add_stop(stop1)
                     graph.add_stop(stop2)
