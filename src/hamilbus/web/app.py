@@ -12,7 +12,7 @@ _STATIC_DIR = Path(__file__).parent / "static"
 
 app = FastAPI(title="Hamilbus Local Viewer")
 app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
-_network: tuple | None = None  # (stops, lines)
+_network: tuple[Stop, Line] | None = None  # (stops, lines)
 _graph = None  # BusNetworkGraph
 
 
