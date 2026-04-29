@@ -12,13 +12,15 @@ _STATIC_DIR = Path(__file__).parent / "static"
 
 app = FastAPI(title="Hamilbus Local Viewer")
 app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
-_network: tuple | None = None # (stops, lines)
-_graph = None # BusNetworkGraph
+_network: tuple | None = None  # (stops, lines)
+_graph = None  # BusNetworkGraph
+
 
 def set_network(stops, lines):
     global _network, _graph
     _network = (stops, lines)
     _graph = None
+
 
 def set_graph(bus_network_graph):
     global _network, _graph
@@ -30,7 +32,7 @@ def set_graph(bus_network_graph):
 def api_stops() -> JSONResponse:
     if _graph is not None:
         stops = _graph.get_stops()
-    else :
+    else:
         stops, _ = _network
     return JSONResponse([stop_payload(stop) for stop in stops])
 
@@ -38,9 +40,9 @@ def api_stops() -> JSONResponse:
 @app.get("/api/lines")
 def api_lines() -> JSONResponse:
     if _graph is not None:
-        edges = _graph.get_edges() # list[tuple[Stop, Stop, dict]]
+        edges = _graph.get_edges()  # list[tuple[Stop, Stop, dict]]
         return JSONResponse(graph_lines_payload(edges))
-    else :
+    else:
         _, lines = _network
         return JSONResponse([line_payload(line) for line in lines])
 

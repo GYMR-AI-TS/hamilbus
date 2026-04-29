@@ -33,6 +33,7 @@ def line_payload(line: Line) -> dict[str, Any]:
         "shape": shape,
     }
 
+
 def graph_lines_payload(edges: list[tuple]) -> list[dict[str, Any]]:
     """Group edges by line and return one entry per line with multiple segments."""
     # Group by line index (fall back to line name if index missing)
@@ -48,8 +49,10 @@ def graph_lines_payload(edges: list[tuple]) -> list[dict[str, Any]]:
                 "color": (line.color if line and line.color else None) or "#3388ff",
                 "segments": [],
             }
-        grouped[key]["segments"].append([
-            {"lat": stop1.lat, "lon": stop1.lon},
-            {"lat": stop2.lat, "lon": stop2.lon},
-        ])
+        grouped[key]["segments"].append(
+            [
+                {"lat": stop1.lat, "lon": stop1.lon},
+                {"lat": stop2.lat, "lon": stop2.lon},
+            ]
+        )
     return list(grouped.values())
