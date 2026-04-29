@@ -62,7 +62,7 @@ class BusNetworkGraph:
             for u, v, data in self.graph.edges(data=True)
         ]
 
-    def has_edge(self, u, v):
+    def has_edge(self, u, v) -> bool:
         return self.graph.has_edge(u, v)
 
     def fully_connected_graph(self) -> nx.Graph:
@@ -77,7 +77,7 @@ class BusNetworkGraph:
                     stop_u = self.graph.nodes[u]["stop"]
                     stop_v = self.graph.nodes[v]["stop"]
                     line = Line(
-                        id=-1,
+                        id="-1",
                         name="Direct Connection",
                         long_name="Direct Connection",
                         color="gray",
