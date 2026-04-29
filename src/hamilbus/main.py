@@ -1,7 +1,7 @@
 from pathlib import Path
 import hamilbus.reader as reader
 from hamilbus.graph_builder import GraphBuilder
-from hamilbus.web import run_server, set_graph
+from hamilbus.web import run_server, set_graph_network
 
 
 def main() -> None:
@@ -20,7 +20,7 @@ def main() -> None:
     graph_builder.order_stops()
     graph = graph_builder.build_graph()
 
-    set_graph(graph)
+    set_graph_network(graph)
     run_server(host="127.0.0.1", port=3000)
 
 

@@ -8,12 +8,14 @@ from fastapi.staticfiles import StaticFiles
 
 from .serializers import line_payload, stop_payload, graph_lines_payload
 
+from hamilbus.datamodels import Stop, Line, BusNetworkGraph
+
 _STATIC_DIR = Path(__file__).parent / "static"
 
 app = FastAPI(title="Hamilbus Local Viewer")
 app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
 _network: tuple[Stop, Line] | None = None  # (stops, lines)
-_graph = None  # BusNetworkGraph
+_graph: BusNetworkGraph | None = None  # BusNetworkGraph
 
 
 def set_network(stops, lines):
@@ -22,7 +24,7 @@ def set_network(stops, lines):
     _graph = None
 
 
-def set_graph(bus_network_graph):
+def set_graph_network(bus_network_graph):
     global _network, _graph
     _graph = bus_network_graph
     _network = None
