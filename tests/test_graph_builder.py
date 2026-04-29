@@ -36,26 +36,29 @@ def test_class_creation_failure_2():
 
 
 def test_merge_stops():
-    lines = [
-        Line(id="0", name="Line 1", long_name="Line 1 Long Name", color="red"),
-        Line(id="1", name="Line 2", long_name="Line 2 Long Name", color="blue"),
-    ]
     stops = [
-        Stop(id="1", name="Stop 1", type="parent_station", lat=40, lon=-1, lines=[lines[0]]),
-        Stop(id="2", name="Stop 2", type="substation", lat=41, lon=-2, lines=[lines[1]], parent_station_id="1"),
+        Stop(id="1", name="Stop 1", type="parent_station", lat=40, lon=-1),
+        Stop(id="2", name="Stop 2", type="substation", lat=41, lon=-2, parent_station_id="1"),
+        Stop(id="3", name="Stop 3", type="substation", lat=42, lon=-3, parent_station_id="2"),
+        Stop(id="4", name="Stop 1", type="substation", lat=43, lon=-4, parent_station_id="2"),
     ]
-    trips_by_lines, stops_by_trips = {}, {}
+    lines, trips_by_lines, stops_by_trips = [], {}, {}
     graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips)
-    merged_stops = graph_builder.merge_stops()
-    assert len(merged_stops) == 1
+    graph_builder.merge_stops()
+    merged_stops = graph_builder.merged_stops
+    assert len(merged_stops) == 2
     assert merged_stops[0].id == "1"
     assert merged_stops[0].name == "Stop 1"
     assert merged_stops[0].type == "centroid"
     assert merged_stops[0].lat == 40.5
     assert merged_stops[0].lon == -1.5
-    assert merged_stops[0].lines == lines
     assert merged_stops[0].parent_station_id is None
-
+    assert merged_stops[1].id == "3"
+    assert merged_stops[1].name == "Stop 3"
+    assert merged_stops[1].type == "centroid"
+    assert merged_stops[1].lat == 42.5
+    assert merged_stops[1].lon == -3.5
+    assert merged_stops[1].parent_station_id is None
 
 def test_build_graph():
     stops = [
