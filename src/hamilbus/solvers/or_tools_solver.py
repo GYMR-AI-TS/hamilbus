@@ -14,7 +14,6 @@ class ORToolsSolver(BaseSolver):
         # Create Routing Model.
         self.routing_model = pywrapcp.RoutingModel(self.index_manager)
 
-
         def distance_callback(from_index, to_index):
             """Returns the distance between the two nodes."""
             # Convert from routing variable Index to distance matrix NodeIndex.
@@ -22,7 +21,9 @@ class ORToolsSolver(BaseSolver):
             to_node = self.index_manager.IndexToNode(to_index)
             return distance_matrix[from_node][to_node]
 
-        transit_callback_index = self.routing_model.RegisterTransitCallback(distance_callback)
+        transit_callback_index = self.routing_model.RegisterTransitCallback(
+            distance_callback
+        )
         # Define cost of each arc. Here : simply the distance
         self.routing_model.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
 
@@ -49,7 +50,9 @@ class ORToolsSolver(BaseSolver):
             path.append(self.index_manager.IndexToNode(index))
             previous_index = index
             index = solution.Value(self.routing_model.NextVar(index))
-            route_distance += self.routing_model.GetArcCostForVehicle(previous_index, index, 0)
+            route_distance += self.routing_model.GetArcCostForVehicle(
+                previous_index, index, 0
+            )
         path.append(self.index_manager.IndexToNode(index))
         return path, route_distance
 
@@ -63,7 +66,9 @@ class ORToolsSolver(BaseSolver):
             plan_output += f" {self.index_manager.IndexToNode(index)} ->"
             previous_index = index
             index = solution.Value(self.routing_model.NextVar(index))
-            route_distance += self.routing_model.GetArcCostForVehicle(previous_index, index, 0)
+            route_distance += self.routing_model.GetArcCostForVehicle(
+                previous_index, index, 0
+            )
         plan_output += f" {self.index_manager.IndexToNode(index)}\n"
         plan_output += f"Route distance: {route_distance} meters\n"
         print(plan_output)
