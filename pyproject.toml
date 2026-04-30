@@ -16,6 +16,7 @@ dependencies = [
     "geopy",
     "tqdm",
     "numpy",
+    "ortools>=9.15.6755",
 ]
 
 [project.optional-dependencies]
