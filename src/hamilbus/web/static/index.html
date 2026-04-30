@@ -116,7 +116,12 @@ body{font-family:Arial,Helvetica,sans-serif;height:100vh;overflow:hidden;backgro
     lineList.innerHTML = "";
     lineItems.length = 0;
     lines.sort(function(a, b) {
-        return (a.name || "").localeCompare(b.name || "", undefined, { numeric: true, sensitivity: "base" });
+    var na = parseFloat(a.name);
+    var nb = parseFloat(b.name);
+    if (!isNaN(na) && !isNaN(nb)) return na - nb;   // both numeric: compare as numbers
+    if (!isNaN(na)) return -1;                        // numbers before letters
+    if (!isNaN(nb)) return 1;
+    return (a.name || "").localeCompare(b.name || ""); // both non-numeric: alphabetic
     });
     lines.forEach(function(line) {
       var hasShape = line.shape && line.shape.length >= 2;
