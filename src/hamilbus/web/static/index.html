@@ -130,7 +130,7 @@ body{font-family:Arial,Helvetica,sans-serif;height:100vh;overflow:hidden;backgro
           return L.polyline(seg.map(function(p) { return [p.lat, p.lon]; }),
               { color: color, weight: 2.5, opacity: 0.85 }).addTo(map);
       });
-      lineLayers[line.index] = layers;
+      lineLayers[line.id] = layers;
 
       var wrap = document.createElement("div");
       wrap.className = "line-item";
