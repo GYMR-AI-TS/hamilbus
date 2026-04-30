@@ -38,12 +38,26 @@ class ORToolsSolver(BaseSolver):
         # Print solution on console.
         if solution:
             self.print_solution(solution)
+            return self.unpack_solution(solution)
+
+    def unpack_solution(self, solution):
+        """Unpacks the solution into a list of nodes and a distance"""
+        path = []
+        index = self.routing_model.Start(0)
+        route_distance = 0
+        while not self.routing_model.IsEnd(index):
+            path.append(self.index_manager.IndexToNode(index))
+            previous_index = index
+            index = solution.Value(self.routing_model.NextVar(index))
+            route_distance += self.routing_model.GetArcCostForVehicle(previous_index, index, 0)
+        path.append(self.index_manager.IndexToNode(index))
+        return path, route_distance
 
     def print_solution(self, solution):
         """Prints solution on console."""
-        print(f"Objective: {solution.ObjectiveValue()} miles")
+        print(f"Objective: {solution.ObjectiveValue()} meters")
         index = self.routing_model.Start(0)
-        plan_output = "Route for vehicle 0:\n"
+        plan_output = "Route :\n"
         route_distance = 0
         while not self.routing_model.IsEnd(index):
             plan_output += f" {self.index_manager.IndexToNode(index)} ->"
@@ -51,5 +65,5 @@ class ORToolsSolver(BaseSolver):
             index = solution.Value(self.routing_model.NextVar(index))
             route_distance += self.routing_model.GetArcCostForVehicle(previous_index, index, 0)
         plan_output += f" {self.index_manager.IndexToNode(index)}\n"
-        plan_output += f"Route distance: {route_distance}miles\n"
+        plan_output += f"Route distance: {route_distance} meters\n"
         print(plan_output)
