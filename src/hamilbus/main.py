@@ -8,14 +8,7 @@ def main() -> None:
     """Start the Hamilbus local web viewer on port 3000."""
 
     DATA_DIR = Path(__file__).resolve().parents[1] / "hamilbus" / "data"
-    STOPS_PATH = DATA_DIR / "stops.txt"
-    ROUTES_PATH = DATA_DIR / "routes.txt"
-    TRIPS_PATH = DATA_DIR / "trips.txt"
-    STOP_TIMES_PATH = DATA_DIR / "stop_times.txt"
-    stops = reader.load_stops(STOPS_PATH)
-    lines = reader.load_lines(ROUTES_PATH)
-    trips_by_lines = reader.load_trips_per_line(TRIPS_PATH)
-    stops_by_trips = reader.load_stops_per_trip(STOP_TIMES_PATH)
+    stops, lines, trips_by_lines, stops_by_trips = reader.load_gtfs(DATA_DIR)
 
     graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips)
     graph_builder.merge_stops()

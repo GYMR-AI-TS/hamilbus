@@ -64,3 +64,13 @@ def load_stops_per_trip(stop_times_path: str | Path) -> dict[str, list[str]]:
         ):
             stops_by_trips[row["trip_id"]].append(row["stop_id"])
     return stops_by_trips
+
+
+def load_gtfs(
+    gtfs_dir_path: Path,
+) -> tuple[list[Stop], list[Line], dict[str, list[str]], dict[str, list[str]]]:
+    stops = load_stops(gtfs_dir_path / "stops.txt")
+    lines = load_lines(gtfs_dir_path / "routes.txt")
+    trips_by_lines = load_trips_per_line(gtfs_dir_path / "trips.txt")
+    stops_by_trips = load_stops_per_trip(gtfs_dir_path / "stop_times.txt")
+    return stops, lines, trips_by_lines, stops_by_trips
