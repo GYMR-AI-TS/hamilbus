@@ -115,12 +115,27 @@ body{font-family:Arial,Helvetica,sans-serif;height:100vh;overflow:hidden;backgro
   function drawLines(lines) {
     lineList.innerHTML = "";
     lineItems.length = 0;
+    lines.sort(function(a, b) {
+    var na = parseFloat(a.name);
+    var nb = parseFloat(b.name);
+    if (!isNaN(na) && !isNaN(nb)) return na - nb;   // both numeric: compare as numbers
+    if (!isNaN(na)) return -1;                        // numbers before letters
+    if (!isNaN(nb)) return 1;
+    return (a.name || "").localeCompare(b.name || ""); // both non-numeric: alphabetic
+    });
     lines.forEach(function(line) {
-      if (!line.shape || line.shape.length < 2) return;
-      var coords = line.shape.map(function(p) { return [p.lat, p.lon]; });
+      var hasShape = line.shape && line.shape.length >= 2;
+      var hasSegments = line.segments && line.segments.length > 0;
+      if (!hasShape && !hasSegments) return;
       var color = line.color || "#3388ff";
-      var layer = L.polyline(coords, { color: color, weight: 2.5, opacity: 0.85 }).addTo(map);
-      lineLayers[line.index] = layer;
+      var segments = line.segments
+          ? line.segments
+          : (line.shape && line.shape.length >= 2 ? [line.shape] : []);
+      var layers = segments.map(function(seg) {
+          return L.polyline(seg.map(function(p) { return [p.lat, p.lon]; }),
+              { color: color, weight: 2.5, opacity: 0.85 }).addTo(map);
+      });
+      lineLayers[line.id] = layers;
 
       var wrap = document.createElement("div");
       wrap.className = "line-item";
@@ -129,7 +144,7 @@ body{font-family:Arial,Helvetica,sans-serif;height:100vh;overflow:hidden;backgro
       cb.type = "checkbox";
       cb.checked = true;
       cb.addEventListener("change", function() {
-        cb.checked ? layer.addTo(map) : map.removeLayer(layer);
+          layers.forEach(function(l) { cb.checked ? l.addTo(map) : map.removeLayer(l); });
       });
 
       var dot = document.createElement("span");
@@ -151,7 +166,7 @@ body{font-family:Arial,Helvetica,sans-serif;height:100vh;overflow:hidden;backgro
       wrap.appendChild(long);
       lineList.appendChild(wrap);
 
-      lineItems.push({ el: wrap, cb: cb, layer: layer, name: (line.name || "") + " " + (line.long_name || "") });
+      lineItems.push({ el: wrap, cb: cb, layers: layers, name: (line.name || "") + " " + (line.long_name || "") });
     });
     lineCountEl.textContent = lineItems.length;
   }
@@ -168,11 +183,17 @@ body{font-family:Arial,Helvetica,sans-serif;height:100vh;overflow:hidden;backgro
   });
 
   document.getElementById("btn-all").addEventListener("click", function() {
-    lineItems.forEach(function(item) { item.cb.checked = true; item.layer.addTo(map); });
+      lineItems.forEach(function(item) {
+          item.cb.checked = true;
+          item.layers.forEach(function(l) { l.addTo(map); });
+      });
   });
 
   document.getElementById("btn-none").addEventListener("click", function() {
-    lineItems.forEach(function(item) { item.cb.checked = false; map.removeLayer(item.layer); });
+      lineItems.forEach(function(item) {
+          item.cb.checked = false;
+          item.layers.forEach(function(l) { map.removeLayer(l); });
+      });
   });
 
   document.getElementById("search-input").addEventListener("input", function(e) {

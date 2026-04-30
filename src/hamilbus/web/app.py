@@ -6,30 +6,47 @@ from fastapi import FastAPI
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
-from .serializers import line_payload, stop_payload
+from .serializers import line_payload, stop_payload, graph_lines_payload
+
+from hamilbus.datamodels import Stop, Line, BusNetworkGraph
 
 _STATIC_DIR = Path(__file__).parent / "static"
 
 app = FastAPI(title="Hamilbus Local Viewer")
 app.mount("/static", StaticFiles(directory=_STATIC_DIR), name="static")
-_network: tuple | None = None
+_network: tuple[Stop, Line] | None = None  # (stops, lines)
+_graph: BusNetworkGraph | None = None  # BusNetworkGraph
 
 
 def set_network(stops, lines):
-    global _network
+    global _network, _graph
     _network = (stops, lines)
+    _graph = None
+
+
+def set_graph_network(bus_network_graph):
+    global _network, _graph
+    _graph = bus_network_graph
+    _network = None
 
 
 @app.get("/api/stops")
 def api_stops() -> JSONResponse:
-    stops, _ = _network
+    if _graph is not None:
+        stops = _graph.get_stops()
+    else:
+        stops, _ = _network
     return JSONResponse([stop_payload(stop) for stop in stops])
 
 
 @app.get("/api/lines")
 def api_lines() -> JSONResponse:
-    _, lines = _network
-    return JSONResponse([line_payload(line) for line in lines])
+    if _graph is not None:
+        edges = _graph.get_edges()  # list[tuple[Stop, Stop, dict]]
+        return JSONResponse(graph_lines_payload(edges))
+    else:
+        _, lines = _network
+        return JSONResponse([line_payload(line) for line in lines])
 
 
 @app.get("/", response_class=HTMLResponse)
