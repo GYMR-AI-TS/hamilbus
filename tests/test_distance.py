@@ -57,8 +57,8 @@ def test_compute_distance_matrix():
         "0",
         "1",
     ]
-    assert path_matrix[0, 2] == None
-    assert path_matrix[1, 2] == None
+    assert path_matrix[0, 2] is None
+    assert path_matrix[1, 2] is None
 
 
 def test_no_stops():
