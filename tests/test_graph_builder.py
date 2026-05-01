@@ -217,7 +217,4 @@ def test_build_graph_after_merge_stops():
 
     assert graph_builder.lines[0].stops == graph_builder.merged_stops
     assert graph_builder.lines[1].stops == graph_builder.merged_stops
-    assert (
-        graph_builder.lines[2].stops
-        == graph_builder.merged_stops[:1] + graph_builder.merged_stops[2:]
-    )
+    assert graph_builder.lines[2].stops == graph_builder.merged_stops[:1] + graph_builder.merged_stops[2:]

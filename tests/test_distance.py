@@ -46,10 +46,7 @@ def test_compute_distance_matrix():
     # Check distances and paths
     assert stops_id_to_index == {0: stop1.id, 1: stop2.id, 2: stop3.id}
 
-    assert (
-        distance_matrix[0, 1] - 111319.49079327357
-        < 1e-6
-    )
+    assert distance_matrix[0, 1] - 111319.49079327357 < 1e-6
     assert distance_matrix[0, 2] == float("inf")
     assert distance_matrix[1, 2] == float("inf")
 

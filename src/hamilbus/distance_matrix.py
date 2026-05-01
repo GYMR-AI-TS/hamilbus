@@ -7,9 +7,8 @@ import numpy as np
 
 
 def compute_distance_matrix(
-    bus_graph: BusNetworkGraph,
-    strategy: str = "dijkstra"
-    ) -> tuple[np.ndarray, np.ndarray, dict]:
+    bus_graph: BusNetworkGraph, strategy: str = "dijkstra"
+) -> tuple[np.ndarray, np.ndarray, dict]:
     """Computes the shortest distance and path between all pairs of stops in the graph."""
 
     stops_index_to_id = {
@@ -24,22 +23,20 @@ def compute_distance_matrix(
     }
 
     for u_idx in range(len_stops):
-
         for v_idx in range(len_stops):
-
             if u_idx != v_idx:
                 try:
                     length, path = strategy_func[strategy](
-                                                            bus_graph.graph, 
-                                                            stops_index_to_id[u_idx], 
-                                                            stops_index_to_id[v_idx], 
-                                                            weight="distance"
-                                                        )
+                        bus_graph.graph,
+                        stops_index_to_id[u_idx],
+                        stops_index_to_id[v_idx],
+                        weight="distance",
+                    )
                     path_matrix[u_idx, v_idx] = path
                     distance_matrix[u_idx, v_idx] = length
 
                 except nx.NetworkXNoPath:
-                    path_matrix[u_idx, v_idx] = None  
+                    path_matrix[u_idx, v_idx] = None
                     # No path exists
                     distance_matrix[u_idx, v_idx] = np.inf
                     # Infinite distance if no path exists
@@ -47,7 +44,7 @@ def compute_distance_matrix(
             else:
                 distance_matrix[u_idx, v_idx] = 0
                 # Distance from a node to itself is 0
-                path_matrix[u_idx, v_idx] = [u_idx]  
+                path_matrix[u_idx, v_idx] = [u_idx]
                 # Path from a node to itself is just the node
 
     return path_matrix, distance_matrix, stops_index_to_id
