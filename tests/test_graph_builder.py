@@ -7,7 +7,15 @@ def test_class_creation():
         Stop(id="0", name="Stop 1", type="parent_station", lat=40.7128, lon=-74.0060),
         Stop(id="1", name="Stop 2", type="parent_station", lat=40.7129, lon=-74.0061),
     ]
-    lines = [Line(id="0", name="Line 1", long_name="Line 1 Long Name", color="red", stops=[stops[0], stops[1]])]
+    lines = [
+        Line(
+            id="0",
+            name="Line 1",
+            long_name="Line 1 Long Name",
+            color="red",
+            stops=[stops[0], stops[1]],
+        )
+    ]
     trips_by_lines, stops_by_trips = {}, {}
     graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips)
     assert graph_builder.stops == stops
@@ -38,9 +46,30 @@ def test_class_creation_failure_2():
 def test_merge_stops():
     stops = [
         Stop(id="1", name="Stop 1", type="parent_station", lat=40, lon=-1),
-        Stop(id="2", name="Stop 2", type="substation", lat=41, lon=-2, parent_station_id="1"),
-        Stop(id="3", name="Stop 3", type="substation", lat=42, lon=-3, parent_station_id="2"),
-        Stop(id="4", name="Stop 1", type="substation", lat=43, lon=-4, parent_station_id="2"),
+        Stop(
+            id="2",
+            name="Stop 2",
+            type="substation",
+            lat=41,
+            lon=-2,
+            parent_station_id="1",
+        ),
+        Stop(
+            id="3",
+            name="Stop 3",
+            type="substation",
+            lat=42,
+            lon=-3,
+            parent_station_id="2",
+        ),
+        Stop(
+            id="4",
+            name="Stop 1",
+            type="substation",
+            lat=43,
+            lon=-4,
+            parent_station_id="2",
+        ),
     ]
     lines, trips_by_lines, stops_by_trips = [], {}, {}
     graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips)
@@ -112,11 +141,32 @@ def count_unique_values(d: dict):
 def test_build_graph_after_merge_stops():
     stops = [
         Stop(id="0", name="Stop 1", type="parent_station", lat=40.7128, lon=-1.5006),
-        Stop(id="1", name="Stop 2", type="substation", lat=40.7129, lon=-1.5007, parent_station_id="0"),
+        Stop(
+            id="1",
+            name="Stop 2",
+            type="substation",
+            lat=40.7129,
+            lon=-1.5007,
+            parent_station_id="0",
+        ),
         Stop(id="2", name="Stop 3", type="parent_station", lat=40.7130, lon=-1.5008),
-        Stop(id="3", name="Stop 4", type="substation", lat=40.7131, lon=-1.5009, parent_station_id="2"),
+        Stop(
+            id="3",
+            name="Stop 4",
+            type="substation",
+            lat=40.7131,
+            lon=-1.5009,
+            parent_station_id="2",
+        ),
         Stop(id="4", name="Stop 3", type="parent_station", lat=40.7130, lon=-1.5008),
-        Stop(id="5", name="Stop 4", type="substation", lat=40.7131, lon=-1.5009, parent_station_id="4"),
+        Stop(
+            id="5",
+            name="Stop 4",
+            type="substation",
+            lat=40.7131,
+            lon=-1.5009,
+            parent_station_id="4",
+        ),
     ]
     lines = [
         Line(id="0", name="Line 1", long_name="Line 1 Long Name", color="red"),

@@ -13,9 +13,9 @@ dependencies = [
     "fastapi",
     "networkx",
     "uvicorn",
-    "pyproj",
-    "shapely",
+    "geopy",
     "tqdm",
+    "numpy",
 ]
 
 [project.optional-dependencies]
