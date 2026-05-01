@@ -14,7 +14,8 @@ dependencies = [
     "networkx",
     "uvicorn",
     "geopy",
-    "tqdm"
+    "tqdm",
+    "numpy",
 ]
 
 [project.optional-dependencies]
