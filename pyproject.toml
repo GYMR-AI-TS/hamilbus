@@ -13,13 +13,7 @@ dependencies = [
     "fastapi",
     "networkx",
     "uvicorn",
-<<<<<<< HEAD
-    "pyproj",
-    "shapely",
-    "tqdm",
-=======
     "geopy"
->>>>>>> 8d69109 (Feature : Add distance calculation based on earth and add it in init)
 ]
 
 [project.optional-dependencies]
