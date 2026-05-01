@@ -43,8 +43,16 @@ def test_serializers():
     stops_json_response_graph = api_stops()
     lines_json_response_graph = api_lines()
 
-    assert stops_json_response_network.status_code == stops_json_response_graph.status_code
-    assert json.loads(stops_json_response_network.body) == json.loads(stops_json_response_graph.body)
+    assert (
+        stops_json_response_network.status_code == stops_json_response_graph.status_code
+    )
+    assert json.loads(stops_json_response_network.body) == json.loads(
+        stops_json_response_graph.body
+    )
 
-    assert lines_json_response_network.status_code == lines_json_response_graph.status_code
-    assert len(json.loads(lines_json_response_network.body)) == len(json.loads(lines_json_response_graph.body))
+    assert (
+        lines_json_response_network.status_code == lines_json_response_graph.status_code
+    )
+    assert len(json.loads(lines_json_response_network.body)) == len(
+        json.loads(lines_json_response_graph.body)
+    )

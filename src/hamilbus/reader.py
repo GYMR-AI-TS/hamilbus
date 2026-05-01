@@ -20,9 +20,9 @@ def load_stops(stops_path: str | Path) -> list[Stop]:
                 type="substation" if row.get("parent_station") else "parent_station",
                 lat=float(row["stop_lat"]),
                 lon=float(row["stop_lon"]),
-                parent_station_id=row["parent_station"]
-                if row.get("parent_station")
-                else None,
+                parent_station_id=(
+                    row["parent_station"] if row.get("parent_station") else None
+                ),
             )
             stops.append(stop)
     return stops

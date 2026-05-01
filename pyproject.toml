@@ -13,7 +13,8 @@ dependencies = [
     "fastapi",
     "networkx",
     "uvicorn",
-    "geopy"
+    "geopy",
+    "tqdm"
 ]
 
 [project.optional-dependencies]

@@ -4,7 +4,6 @@
 import networkx as nx
 from typing import Optional, List
 from dataclasses import dataclass, field
-import networkx as nx
 from geopy.distance import geodesic
 
 
