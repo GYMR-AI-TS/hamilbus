@@ -41,7 +41,7 @@ def test_compute_distance_matrix():
     graph, stop1, stop2, stop3, line = generate_test_graph()
 
     # Compute distance matrix
-    path_matrix, distance_matrix, stops_id_to_index = hbus.compute_distance_matrix(graph)
+    distance_matrix, path_matrix, stops_id_to_index = hbus.compute_distance_matrix(graph)
 
     # Check distances and paths
     assert stops_id_to_index == {0: stop1.id, 1: stop2.id, 2: stop3.id}
@@ -60,5 +60,5 @@ def test_compute_distance_matrix():
 
 def test_no_stops():
     graph = hbus.BusNetworkGraph()
-    path_matrix, distance_matrix, stops_id_to_index = hbus.compute_distance_matrix(graph)
+    distance_matrix, path_matrix, stops_id_to_index = hbus.compute_distance_matrix(graph)
     assert distance_matrix.shape[0] == 0

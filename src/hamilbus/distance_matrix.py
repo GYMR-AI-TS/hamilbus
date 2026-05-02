@@ -48,4 +48,4 @@ def compute_distance_matrix(
                 path_matrix[u_idx, v_idx] = [u_idx]
                 # Path from a node to itself is just the node
 
-    return path_matrix, distance_matrix, stops_index_to_id
+    return distance_matrix, path_matrix, stops_index_to_id
