@@ -39,3 +39,20 @@ def load_dict(path: str | Path) -> dict[float, str]:
         raise FileNotFoundError(f"File not found: {path}")
     with open(path, encoding="utf-8") as f:
         return {float(k): v for k, v in json.load(f).items()}
+
+
+def save_list(lst: list, path: str | Path) -> Path:
+    path = Path.cwd() / Path(path).with_suffix(".json")
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(lst, f, indent=2)
+    return path.resolve()
+
+
+def load_list(path: str | Path) -> list:
+    path = Path(path).with_suffix(".json")
+    if not path.is_absolute():
+        path = Path.cwd() / path
+    if not path.exists():
+        raise FileNotFoundError(f"File not found: {path}")
+    with open(path, encoding="utf-8") as f:
+        return json.load(f)
