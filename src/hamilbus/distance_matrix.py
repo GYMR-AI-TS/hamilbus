@@ -23,7 +23,9 @@ def compute_distance_matrix(
         "bellman-ford": nx.single_source_bellman_ford,
     }
 
-    for u_idx in tqdm(range(len_stops), desc="Computing the distance matrix", unit=" stops"):
+    for u_idx in tqdm(
+        range(len_stops), desc="Computing the distance matrix", unit=" stops"
+    ):
         for v_idx in range(len_stops):
             if u_idx != v_idx:
                 try:
