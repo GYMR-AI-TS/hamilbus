@@ -3,23 +3,25 @@ import numpy as np
 from pathlib import Path
 
 
-def save_array(arr: np.ndarray, name: str | Path) -> Path:
+def save_array(arr: np.ndarray, path: str | Path) -> Path:
     """Save a NumPy array to disk. Extension is set automatically (.npy) if omitted"""
-    path = Path.cwd() / name
-    path = path.with_suffix(".npy")
+    path = Path(path).with_suffix(".npy")
+    if not path.is_absolute():
+        path = Path.cwd() / path
     np.save(path, arr)
     return path.resolve()
 
 
-def load_array(name: str | Path) -> np.ndarray:
-    """Load a NumPy array from a .npz file in current working directory"""
-    path = Path.cwd() / name
+def load_array(path: str | Path) -> np.ndarray:
+    """Load a NumPy array from a .npy file. Defaults to current working directory if no absolute path is given"""
+    if not path.is_absolute():
+        path = Path.cwd() / path
     if not path.exists():
         raise FileNotFoundError(f"File not found: {path}")
     if path.suffix == ".npy":
         return np.load(path)
     else:
-        raise ValueError(f"Unsupported extension: {path.suffix!r}. Use .npy or .npz")
+        raise ValueError(f"Unsupported extension: {path.suffix!r}. Use .npy.")
 
 
 def save_dict(d: dict[float, str], path: str | Path) -> Path:
