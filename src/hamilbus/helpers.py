@@ -14,6 +14,7 @@ def save_array(arr: np.ndarray, path: str | Path) -> Path:
 
 def load_array(path: str | Path) -> np.ndarray:
     """Load a NumPy array from a .npy file. Defaults to current working directory if no absolute path is given"""
+    path = Path(path)
     if not path.is_absolute():
         path = Path.cwd() / path
     if not path.exists():
