@@ -71,7 +71,7 @@ def test_line_creation_failure():
 # BusNetworkGraph
 def test_bus_network_graph_creation():
     graph = hbus.BusNetworkGraph()
-    assert isinstance(graph.graph, nx.MultiGraph)
+    assert isinstance(graph, nx.MultiGraph)
 
 
 def test_add_stop_to_graph():
@@ -84,8 +84,8 @@ def test_add_stop_to_graph():
         lon=-74.0060,
     )
     graph.add_stop(stop)
-    assert graph.graph.has_node(stop.id)
-    assert graph.graph.nodes[stop.id]["stop"] == stop
+    assert graph.has_node(stop.id)
+    assert graph.nodes[stop.id]["stop"] == stop
 
 
 def test_add_edge_to_graph():
@@ -106,13 +106,13 @@ def test_add_edge_to_graph():
     )
     graph.add_stop(stop1)
     graph.add_stop(stop2)
-    graph.add_edge(
+    graph.link_stops(
         stop1,
         stop2,
         line=hbus.Line(id="0", name="Line 1", long_name="Line 1 Long Name", color="red"),
     )
-    assert graph.graph.has_edge(stop1.id, stop2.id)
-    assert graph.graph[stop1.id][stop2.id][0]["line"].id == "0"
+    assert graph.has_edge(stop1.id, stop2.id)
+    assert graph[stop1.id][stop2.id][0]["line"].id == "0"
 
 
 def test_get_stops_returns_all_stops():
@@ -136,7 +136,7 @@ def test_get_edges_returns_edge_attributes():
 
     graph.add_stop(stop1)
     graph.add_stop(stop2)
-    graph.add_edge(stop1, stop2, line=line)
+    graph.link_stops(stop1, stop2, line=line)
 
     edges = graph.get_edges()
     assert len(edges) == 1
@@ -162,12 +162,12 @@ def test_add_line_connects_stops_and_adds_nodes():
 
     graph.add_line(line)
 
-    assert graph.graph.has_node("0")
-    assert graph.graph.has_node("1")
-    assert graph.graph.has_node("2")
-    assert graph.graph.number_of_edges() == 2
-    assert graph.graph["0"]["1"][0]["line"] == line
-    assert graph.graph["1"]["2"][0]["line"] == line
+    assert graph.has_node("0")
+    assert graph.has_node("1")
+    assert graph.has_node("2")
+    assert graph.number_of_edges() == 2
+    assert graph["0"]["1"][0]["line"] == line
+    assert graph["1"]["2"][0]["line"] == line
 
 
 def test_fully_connected_graph_preserves_edge_data():

@@ -28,18 +28,18 @@ class Line:
 
 
 @dataclass
-class BusNetworkGraph:
+class BusNetworkGraph(nx.MultiGraph):
     """Represents a graph composed of stops connected by edges."""
-
-    graph: nx.MultiGraph = field(default_factory=nx.MultiGraph)
+    def __init__(self):
+        super().__init__()
 
     def add_stop(self, stop: Stop):
         """Adds a stop to the graph."""
-        self.graph.add_node(stop.id, stop=stop)
+        self.add_node(stop.id, stop=stop)
 
-    def add_edge(self, stop1: Stop, stop2: Stop, line: Line):
+    def link_stops(self, stop1: Stop, stop2: Stop, line: Line):
         """Adds an edge between two stops, with the line as an attribute."""
-        self.graph.add_edge(
+        self.add_edge(
             stop1.id,
             stop2.id,
             line=line,
@@ -51,21 +51,18 @@ class BusNetworkGraph:
         for stop in line.stops:
             self.add_stop(stop)
         for i in range(len(line.stops) - 1):
-            self.add_edge(line.stops[i], line.stops[i + 1], line)
+            self.link_stops(line.stops[i], line.stops[i + 1], line)
 
     def get_stops(self) -> List[Stop]:
         """Returns a list of all stops in the graph."""
-        return [data["stop"] for _, data in self.graph.nodes(data=True)]
+        return [data["stop"] for _, data in self.nodes(data=True)]
 
     def get_edges(self) -> List[tuple[Stop, Stop, dict]]:
         """Returns a list of all edges in the graph, with their attributes."""
         return [
-            (self.graph.nodes[u]["stop"], self.graph.nodes[v]["stop"], data)
-            for u, v, data in self.graph.edges(data=True)
+            (self.nodes[u]["stop"], self.nodes[v]["stop"], data)
+            for u, v, data in self.edges(data=True)
         ]
-
-    def has_edge(self, u, v) -> bool:
-        return self.graph.has_edge(u, v)
 
     def fully_connected_graph(self) -> nx.Graph:
         """Returns a fully connected graph where each edge weight is the shortest distance between stops."""
@@ -76,8 +73,8 @@ class BusNetworkGraph:
         for u in fully_connected.nodes:
             for v in fully_connected.nodes:
                 if u != v and not fully_connected.has_edge(u, v):
-                    stop_u = self.graph.nodes[u]["stop"]
-                    stop_v = self.graph.nodes[v]["stop"]
+                    stop_u = self.nodes[u]["stop"]
+                    stop_v = self.nodes[v]["stop"]
                     line = Line(
                         id="-1",
                         name="Direct Connection",
