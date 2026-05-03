@@ -51,6 +51,9 @@ class PathReconstructor:
         real_solution_stops = []
         for u, v in zip(solution, solution[1:]):
             real_path = self.path_matrix[u, v]
+            if len(real_solution_stops) > 1:
+                # Keep the first node the first time, then cut it for the next paths to avoid [0, 1, 1, 2, 2...]
+                real_path = real_path[1:]
             for stop_id in real_path:
                 stop = self.ids_to_stops[stop_id]
                 real_solution_stops.append(stop)
