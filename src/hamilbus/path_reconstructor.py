@@ -2,7 +2,7 @@
 ### Reconstructs the final result path based on the mode
 
 import numpy as np
-from hamilbus.datamodels import Stop, Line, BusNetworkGraph
+from hamilbus.datamodels import Line, BusNetworkGraph
 
 
 class PathReconstructor:
