@@ -16,6 +16,7 @@ class Settings:
     save_matrix: bool = True
     output_dir: Path = Path("./results")
     solver: str = "nearest_neighbor"
+    solution: Path | None = None
 
 
 def load_settings(config_path: Path | None, cli_overrides: dict) -> Settings:
