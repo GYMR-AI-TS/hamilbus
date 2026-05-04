@@ -1,0 +1,12 @@
+[graph]
+complete = true
+distance_method = "euclidean"
+
+[data]
+gtfs_folder = "./data/naolib"
+ignored_lines = ["L80", "L81"]
+
+[output]
+save_solution = true
+save_matrix = true
+output_dir = "./results"
