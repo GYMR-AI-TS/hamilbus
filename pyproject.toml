@@ -9,6 +9,9 @@ description = "Applying graph theory to a public transport network."
 readme = "README.md"
 requires-python = ">=3.14"
 
+[project.scripts]
+hamilbus = "hamilbus.main:main"
+
 dependencies = [
     "fastapi",
     "networkx",
