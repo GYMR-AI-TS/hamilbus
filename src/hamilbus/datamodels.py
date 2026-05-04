@@ -30,6 +30,7 @@ class Line:
 @dataclass
 class BusNetworkGraph(nx.MultiGraph):
     """Represents a graph composed of stops connected by edges."""
+
     def __init__(self):
         super().__init__()
 
@@ -54,7 +55,7 @@ class BusNetworkGraph(nx.MultiGraph):
             self.link_stops(line.stops[i], line.stops[i + 1], line)
 
     def get_stops(self) -> List[Stop]:
-        """Returns a list of all stops in the graph."""
+        """Returns a list of all stops in the graph as Stop objects."""
         return [data["stop"] for _, data in self.nodes(data=True)]
 
     def get_edges(self) -> List[tuple[Stop, Stop, dict]]:
@@ -82,5 +83,4 @@ class BusNetworkGraph(nx.MultiGraph):
                         color="gray",
                     )
                     fully_connected.add_edge(stop_u.id, stop_v.id, line=line)
-
         return fully_connected
