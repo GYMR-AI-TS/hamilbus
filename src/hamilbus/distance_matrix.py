@@ -11,10 +11,8 @@ def compute_distance_matrix(
 ) -> tuple[np.ndarray, np.ndarray, dict]:
     """Computes the shortest distance and path between all pairs of stops in the graph."""
 
-    stops_index_to_id = {
-        idx: stop_id for idx, stop_id in enumerate(bus_graph.graph.nodes)
-    }
-    len_stops = len(bus_graph.graph.nodes)
+    stops_index_to_id = {idx: stop_id for idx, stop_id in enumerate(bus_graph.nodes)}
+    len_stops = len(bus_graph.nodes)
     distance_matrix = np.zeros((len_stops, len_stops))
     path_matrix = np.empty((len_stops, len_stops), dtype=object)
     strategy_func = {
@@ -27,7 +25,7 @@ def compute_distance_matrix(
             if u_idx != v_idx:
                 try:
                     length, path = strategy_func[strategy](
-                        bus_graph.graph,
+                        bus_graph,
                         stops_index_to_id[u_idx],
                         stops_index_to_id[v_idx],
                         weight="distance",

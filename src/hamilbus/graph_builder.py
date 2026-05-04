@@ -115,5 +115,5 @@ class GraphBuilder:
                     graph.add_stop(stop1)
                     graph.add_stop(stop2)
                     if not graph.has_edge(stop1.id, stop2.id):
-                        graph.add_edge(stop1, stop2, line)
+                        graph.link_stops(stop1, stop2, line)
         return graph
