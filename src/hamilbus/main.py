@@ -10,40 +10,62 @@ from hamilbus.distance_matrix import compute_distance_matrix
 from hamilbus.pipeline import serve, run_pipeline, run_solver
 from hamilbus.config import Settings, load_settings
 
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="hamilbus")
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    # hamilbus run
-    run_p = subparsers.add_parser("run")
-    run_p.add_argument("--gtfs-folder", type=Path)
-    run_p.add_argument("--config", type=Path)
+    # hamilbus serve
+    # Visualize the network, from a graph or the raw data
+    # Optionally visualize pre-saved solutions
+    # No computation other than creating the graph if needed
+    serve_p = subparsers.add_parser("serve")
+    serve_p.add_argument("--gtfs-folder", type=Path)
+    serve_p.add_argument("--graph", type=Path)
+    serve_p.add_argument("--solution", type=Path, nargs="+")  # accepts multiple values
+    serve_p.add_argument("--config", type=Path)
 
     # hamilbus solve
+    # Solve for the optimal path from a pre-computed distance matrix
+    # Optionally compare multiple solvers
+    # Optionally launch the server to visualize the solutions
+    # No graph or distance matrix computation, only solving
     solve_p = subparsers.add_parser("solve")
-    solve_p.add_argument("--matrix", type=str)
-    solve_p.add_argument("--solver", nargs="+")  # accepts multiple values
+    solve_p.add_argument("--matrix", type=Path)
+    solve_p.add_argument("--solver", type=str, nargs="+")  # accepts multiple values
+    solve_p.add_argument("--result-type", type=str, choices=["cycle", "path"], default=None)
+    solve_p.add_argument("--start", nargs="+", type=str)
+    solve_p.add_argument("--complete-graph", action="store_true")
+    solve_p.add_argument("--save-solution", nargs="?", const="default", default=None, type=Path)
+    solve_p.add_argument("--serve", action="store_true")
     solve_p.add_argument("--config", type=Path)
 
-    # hamilbus serve
-    serve_p = subparsers.add_parser("serve")
-    serve_p.add_argument("--graph", type=str)
-    serve_p.add_argument("--gtfs-folder", type=Path)
-    serve_p.add_argument("--solution", type=str, nargs="+")  # accepts multiple values
-    serve_p.add_argument("--config", type=Path)
+    # hamilbus run
+    # Run the full pipeline, from raw data to solution
+    run_p = subparsers.add_parser("run")
+    run_p.add_argument("--gtfs-folder", type=Path)
+    run_p.add_argument("--graph", type=Path)
+    run_p.add_argument("--ignored-lines", nargs="+", type=str)
+    run_p.add_argument("--distance-method", type=str)
+    run_p.add_argument("--save-matrix", nargs="?", const="default", default=None, type=Path)
+    run_p.add_argument("--solver", nargs="+")  # accepts multiple values
+    run_p.add_argument("--result-type", type=str, choices=["cycle", "path"], default=None)
+    run_p.add_argument("--start", nargs="+", type=str)
+    run_p.add_argument("--complete-graph", action="store_true")
+    run_p.add_argument("--save-solution", nargs="?", const="default", default=None, type=Path)
+    run_p.add_argument("--serve", action="store_true")
+    run_p.add_argument("--config", type=Path)
 
     return parser
 
 
 def dispatch(command: str, settings: Settings) -> None:
-    if command == "run":
-        run_pipeline(settings)
-        pass
+    if command == "serve":
+        serve(settings)
     elif command == "solve":
         run_solver(settings)
-        pass
-    elif command == "serve":
-        serve(settings)
+    elif command == "run":
+        run_pipeline(settings)
 
 
 def main():
