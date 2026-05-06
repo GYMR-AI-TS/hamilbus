@@ -81,10 +81,20 @@ def _apply_toml(s: Settings, data: dict) -> None:
         s.output_dir = Path(output["output_dir"])
     if "save_matrix" in output:
         val = output["save_matrix"]
-        s.save_matrix = Path(val) if isinstance(val, str) else None
+        if val is False:
+            s.save_matrix = None
+        elif val is True:
+            s.save_matrix = "default"
+        else:
+            s.save_matrix = Path(val)
     if "save_solution" in output:
         val = output["save_solution"]
-        s.save_solution = Path(val) if isinstance(val, str) else None
+        if val is False:
+            s.save_solution = None
+        elif val is True:
+            s.save_solution = "default"
+        else:
+            s.save_solution = Path(val)
     if "serve" in output:
         s.serve = output["serve"]
 
