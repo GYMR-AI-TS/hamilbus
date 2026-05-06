@@ -1,5 +1,5 @@
 ### config.py
-### 
+### Defines and populates the Settings dataclass with config.toml and CLI arguments
 
 import tomllib
 from dataclasses import dataclass, field
@@ -9,9 +9,11 @@ from enum import Enum
 
 DEFAULT_CONFIG_PATH = Path("hamilbus.toml")
 
+
 class ResultType(Enum):
     CYCLE = "cycle"
     PATH = "path"
+
 
 @dataclass
 class Settings:
@@ -23,15 +25,18 @@ class Settings:
     solution: Path | None = None
     output_dir: Path = Path("./results")
     # Parameters
-    ignored_lines: list[str] = field(default_factory=list)  # Not implemented yet
-    distance_method: str = "geodesic"  # Not implemented yet
-    result_type: ResultType = ResultType.CYCLE  # Not implemented yet
-    start: list[int] | str | None = None  # Not implemented yet  # None = default, "all" = all, list = specific stops
-    solver: list[str] = field(default_factory=lambda: ["or_tools"])  # Not implemented yet
+    # None are implemented yet except "complete_graph" and "serve"
+    ignored_lines: list[str] = field(default_factory=list)
+    distance_method: str = "geodesic"
+    result_type: ResultType = ResultType.CYCLE
+    # start : None = default, "all" = all, list = specific stops
+    start: list[int] | str | None = None
+    solver: list[str] = field(default_factory=lambda: ["or_tools"])
     complete_graph: bool = False
     serve: bool = False
     # Saving actions
-    save_matrix: bool | Path = False  # False = don't save, True = use default output_dir, Path = specific path
+    # False = don't save, True = use default output_dir, Path = specific path
+    save_matrix: bool | Path = False
     save_solution: bool | Path = False
 
 
@@ -71,7 +76,7 @@ def _apply_toml(s: Settings, data: dict) -> None:
 
     graph = data.get("graph", {})
     if "complete_graph" in graph:
-        s.complete_graph = graph["complete_graph"] # A CHECKER
+        s.complete_graph = graph["complete_graph"]
     if "distance_method" in graph:
         s.distance_method = graph["distance_method"]
 
@@ -86,12 +91,14 @@ def _apply_toml(s: Settings, data: dict) -> None:
     output = data.get("output", {})
     if "save_matrix" in output:
         val = output["save_matrix"]
-        s.save_matrix = Path(val) if isinstance(val, str) else val  # str → Path, bool stays bool
+        # str → Path, bool stays bool
+        s.save_matrix = Path(val) if isinstance(val, str) else val
     if "save_solution" in output:
         val = output["save_solution"]
         s.save_solution = Path(val) if isinstance(val, str) else val
     if "serve" in output:
         s.serve = output["serve"]
+
 
 def _apply_cli(s: Settings, cli: dict) -> None:
     if cli.get("gtfs_folder") is not None:
@@ -116,7 +123,8 @@ def _apply_cli(s: Settings, cli: dict) -> None:
         s.complete_graph = True
     if cli.get("save_matrix") is not None:
         val = cli["save_matrix"]
-        s.save_matrix = True if val == "default" else val  # "default" → True, Path → Path
+        # "default" → True, Path → Path
+        s.save_matrix = True if val == "default" else val
     if cli.get("save_solution") is not None:
         val = cli["save_solution"]
         s.save_solution = True if val == "default" else val
@@ -132,7 +140,9 @@ def _parse_start(value: list[str] | str | None) -> list[int] | str | None:
     return [int(v) for v in value]
 
 
-def resolve_save_path(setting: bool | Path, default_dir: Path, filename: str) -> Path | None:
+def resolve_save_path(
+    setting: bool | Path, default_dir: Path, filename: str
+) -> Path | None:
     if setting is False:
         return None
     if setting is True:
