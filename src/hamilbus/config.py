@@ -6,6 +6,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from enum import Enum
 
+
+DEFAULT_CONFIG_PATH = Path("hamilbus.toml")
+
 class ResultType(Enum):
     CYCLE = "cycle"
     PATH = "path"
@@ -32,13 +35,14 @@ class Settings:
     save_solution: bool | Path = False
 
 
-def load_settings(config_path: Path | None = "default path", cli_overrides: dict = {}) -> Settings:
+def load_settings(config_path: Path | None, cli_overrides: dict = {}) -> Settings:
     # Start from defaults
     s = Settings()
 
     # Override with config file
-    if config_path and config_path.exists():
-        with open(config_path, "rb") as f:
+    resolved_config = config_path if config_path is not None else DEFAULT_CONFIG_PATH
+    if resolved_config.exists():
+        with open(resolved_config, "rb") as f:
             toml_data = tomllib.load(f)
         _apply_toml(s, toml_data)
 
