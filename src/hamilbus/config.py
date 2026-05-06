@@ -20,27 +20,30 @@ class Settings:
     solution: Path | None = None
     output_dir: Path = Path("./results")
     # Parameters
-    ignored_lines: list[str] = field(default_factory=list)
-    distance_method: str = "geodesic"
-    result_type: ResultType = ResultType.CYCLE
-    start: list[int] | str | None = None  # None = default, "all" = all, list = specific stops
-    solver: list[str] = field(default_factory=lambda: ["or_tools"])
+    ignored_lines: list[str] = field(default_factory=list)  # Not implemented yet
+    distance_method: str = "geodesic"  # Not implemented yet
+    result_type: ResultType = ResultType.CYCLE  # Not implemented yet
+    start: list[int] | str | None = None  # Not implemented yet  # None = default, "all" = all, list = specific stops
+    solver: list[str] = field(default_factory=lambda: ["or_tools"])  # Not implemented yet
     complete_graph: bool = False
     serve: bool = False
     # Saving actions
-    save_matrix: Path | str | None = None  # None = don't save, "default" = use output_dir, Path = specific path
-    save_solution: Path | str | None = None
+    save_matrix: bool | Path = False  # False = don't save, True = use default output_dir, Path = specific path
+    save_solution: bool | Path = False
 
 
-def load_settings(config_path: Path | None ="default path", cli_overrides: dict = {}) -> Settings:
-    s = Settings()  # 1. start from defaults
+def load_settings(config_path: Path | None = "default path", cli_overrides: dict = {}) -> Settings:
+    # Start from defaults
+    s = Settings()
 
+    # Override with config file
     if config_path and config_path.exists():
         with open(config_path, "rb") as f:
-            toml_data = tomllib.load(f)  # 2. override with config file
+            toml_data = tomllib.load(f)
         _apply_toml(s, toml_data)
 
-    _apply_cli(s, cli_overrides)  # 3. override with CLI
+    # Override with CLI
+    _apply_cli(s, cli_overrides)
 
     return s
 
@@ -64,7 +67,7 @@ def _apply_toml(s: Settings, data: dict) -> None:
 
     graph = data.get("graph", {})
     if "complete_graph" in graph:
-        s.complete_graph = graph["complete_graph"]
+        s.complete_graph = graph["complete_graph"] # A CHECKER
     if "distance_method" in graph:
         s.distance_method = graph["distance_method"]
 
@@ -77,24 +80,12 @@ def _apply_toml(s: Settings, data: dict) -> None:
         s.start = _parse_start(solver["start"])
 
     output = data.get("output", {})
-    if "output_dir" in output:
-        s.output_dir = Path(output["output_dir"])
     if "save_matrix" in output:
         val = output["save_matrix"]
-        if val is False:
-            s.save_matrix = None
-        elif val is True:
-            s.save_matrix = "default"
-        else:
-            s.save_matrix = Path(val)
+        s.save_matrix = Path(val) if isinstance(val, str) else val  # str → Path, bool stays bool
     if "save_solution" in output:
         val = output["save_solution"]
-        if val is False:
-            s.save_solution = None
-        elif val is True:
-            s.save_solution = "default"
-        else:
-            s.save_solution = Path(val)
+        s.save_solution = Path(val) if isinstance(val, str) else val
     if "serve" in output:
         s.serve = output["serve"]
 
@@ -120,9 +111,11 @@ def _apply_cli(s: Settings, cli: dict) -> None:
     if cli.get("complete_graph"):  # store_true: False when absent, True when present
         s.complete_graph = True
     if cli.get("save_matrix") is not None:
-        s.save_matrix = cli["save_matrix"]  # None, "default", or Path
+        val = cli["save_matrix"]
+        s.save_matrix = True if val == "default" else val  # "default" → True, Path → Path
     if cli.get("save_solution") is not None:
-        s.save_solution = cli["save_solution"]
+        val = cli["save_solution"]
+        s.save_solution = True if val == "default" else val
     if cli.get("serve"):
         s.serve = True
 
@@ -135,9 +128,9 @@ def _parse_start(value: list[str] | str | None) -> list[int] | str | None:
     return [int(v) for v in value]
 
 
-def resolve_save_path(setting: Path | str | None, default_dir: Path, filename: str) -> Path | None:
-    if setting is None:
+def resolve_save_path(setting: bool | Path, default_dir: Path, filename: str) -> Path | None:
+    if setting is False:
         return None
-    if setting == "default":
+    if setting is True:
         return default_dir / filename
     return setting
