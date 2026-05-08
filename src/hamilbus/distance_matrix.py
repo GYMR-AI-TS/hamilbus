@@ -4,6 +4,7 @@
 import networkx as nx
 from .datamodels import BusNetworkGraph
 import numpy as np
+from tqdm import tqdm
 
 
 def compute_distance_matrix(
@@ -22,7 +23,9 @@ def compute_distance_matrix(
         "bellman-ford": nx.single_source_bellman_ford,
     }
 
-    for u_idx in range(len_stops):
+    for u_idx in tqdm(
+        range(len_stops), desc="Computing the distance matrix", unit=" stops"
+    ):
         for v_idx in range(len_stops):
             if u_idx != v_idx:
                 try:
@@ -47,4 +50,4 @@ def compute_distance_matrix(
                 path_matrix[u_idx, v_idx] = [u_idx]
                 # Path from a node to itself is just the node
 
-    return path_matrix, distance_matrix, stops_index_to_id
+    return distance_matrix, path_matrix, stops_index_to_id
