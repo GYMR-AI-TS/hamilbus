@@ -9,9 +9,8 @@ from ortools.constraint_solver import routing_enums_pb2, pywrapcp
 
 class ORToolsSolver(BaseSolver):
     """Implements Google's OR-Tools TSP solver on a given distance matrix."""
-    def __init__(self, distance_matrix: np.ndarray, time_limit_seconds: int = 30):
+    def __init__(self, distance_matrix: np.ndarray):
         self.distance_matrix = self._preprocess_distance_matrix(distance_matrix)
-        self.time_limit_seconds = time_limit_seconds
 
     def _preprocess_distance_matrix(self, distance_matrix):
         """Ensures the graph we're solving on is connected and the distance matrix only contains integers."""
@@ -27,7 +26,7 @@ class ORToolsSolver(BaseSolver):
         # Round and cast as int
         return clean_matrix.round().astype(int)
 
-    def solve(self, starting_node_index: int = 0):
+    def solve(self, starting_node_index: int = 0, time_limit_seconds: int = 30):
         # Create the routing index manager.
         # args : num_nodes, num_vehicles, depot (start and end)
         self.index_manager = pywrapcp.RoutingIndexManager(
@@ -59,7 +58,7 @@ class ORToolsSolver(BaseSolver):
         search_parameters.local_search_metaheuristic = (
             routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
         )
-        search_parameters.time_limit.seconds = self.time_limit_seconds
+        search_parameters.time_limit.seconds = time_limit_seconds
 
         # Add display every time a new solution is discovered
         n_improvements = 0

@@ -27,8 +27,8 @@ def main() -> None:
         save_array(distance_matrix, "distance_matrix")
         save_dict(stop_index_to_id, "stop_index_to_id")
 
-    solver = ORToolsSolver(distance_matrix, time_limit_seconds=120)
-    solution = solver.solve()
+    solver = ORToolsSolver(distance_matrix)
+    solution = solver.solve(time_limit_seconds=120)
     save_list(solution, "solution")
 
     set_graph_network(graph)
