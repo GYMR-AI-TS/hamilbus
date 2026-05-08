@@ -27,33 +27,33 @@ def test_or_tools_solver_no_solution():
     """A disconnected graph with no majority cluster :
     distance matrix preprocessing will keep the "inf" since it can't eliminate
     a minority cluster, which will cause the solver to find no solution"""
-    INF = float('inf')
+    INF = float("inf")
     # Nodes 0-1 and 2-3 are connected to each other,
     # but there's no edge crossing between the two clusters.
     distance_matrix = [
-        [0,   10,  INF, INF],
-        [10,   0,  INF, INF],
-        [INF, INF,  0,   10],
-        [INF, INF,  10,   0],
+        [0, 10, INF, INF],
+        [10, 0, INF, INF],
+        [INF, INF, 0, 10],
+        [INF, INF, 10, 0],
     ]
     solver = ORToolsSolver(distance_matrix)
     solution = solver.solve(time_limit_seconds=2)
     assert solution is None
 
 
-def test_or_tools_solver_no_solution():
+def test_or_tools_solver_disconnected_graph():
     """A disconnected graph with a majority cluster :
     distance matrix preprocessing will eliminate the minority disconnected cluster
     so the solver will solve on the majority connected nodes only."""
-    INF = float('inf')
+    INF = float("inf")
     # Nodes 0-1-2 and 3-4 are connected to each other,
     # but there's no edge crossing between the two clusters.
     distance_matrix = [
-        [0,    10,  20, INF, INF],
-        [10,    0,  10, INF, INF],
-        [20,   10,   0, INF, INF],
-        [INF, INF, INF,   0,  10],
-        [INF, INF, INF,  10,   0],
+        [0, 10, 20, INF, INF],
+        [10, 0, 10, INF, INF],
+        [20, 10, 0, INF, INF],
+        [INF, INF, INF, 0, 10],
+        [INF, INF, INF, 10, 0],
     ]
     solver = ORToolsSolver(distance_matrix)
     solution = solver.solve(time_limit_seconds=2)

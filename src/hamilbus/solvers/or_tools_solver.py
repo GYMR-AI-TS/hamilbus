@@ -9,6 +9,7 @@ from ortools.constraint_solver import routing_enums_pb2, pywrapcp
 
 class ORToolsSolver(BaseSolver):
     """Implements Google's OR-Tools TSP solver on a given distance matrix."""
+
     def __init__(self, distance_matrix: np.ndarray):
         self.distance_matrix = self._preprocess_distance_matrix(distance_matrix)
 
