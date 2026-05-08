@@ -18,6 +18,54 @@ def test_or_tools_solver():
         [1972, 579, 1260, 987, 371, 999, 701, 2099, 600, 1162, 1200, 504, 0],
     ]
     solver = ORToolsSolver(distance_matrix)
-    solution = solver.solve()
+    solution = solver.solve(time_limit_seconds=2)
     assert solution[0] == [0, 7, 2, 3, 4, 12, 6, 8, 1, 11, 10, 5, 9, 0]
     assert solution[1] == 7293
+
+
+def test_or_tools_solver_no_solution():
+    """A disconnected graph with no majority cluster :
+    distance matrix preprocessing will keep the "inf" since it can't eliminate
+    a minority cluster, which will cause the solver to find no solution"""
+    INF = float('inf')
+    # Nodes 0-1 and 2-3 are connected to each other,
+    # but there's no edge crossing between the two clusters.
+    distance_matrix = [
+        [0,   10,  INF, INF],
+        [10,   0,  INF, INF],
+        [INF, INF,  0,   10],
+        [INF, INF,  10,   0],
+    ]
+    solver = ORToolsSolver(distance_matrix)
+    solution = solver.solve(time_limit_seconds=2)
+    assert solution is None
+
+
+def test_or_tools_solver_no_solution():
+    """A disconnected graph with a majority cluster :
+    distance matrix preprocessing will eliminate the minority disconnected cluster
+    so the solver will solve on the majority connected nodes only."""
+    INF = float('inf')
+    # Nodes 0-1-2 and 3-4 are connected to each other,
+    # but there's no edge crossing between the two clusters.
+    distance_matrix = [
+        [0,    10,  20, INF, INF],
+        [10,    0,  10, INF, INF],
+        [20,   10,   0, INF, INF],
+        [INF, INF, INF,   0,  10],
+        [INF, INF, INF,  10,   0],
+    ]
+    solver = ORToolsSolver(distance_matrix)
+    solution = solver.solve(time_limit_seconds=2)
+    assert solution[0] == [0, 1, 2, 0]
+    assert solution[1] == 40
+
+
+def test_or_tools_solver_trivial_single_node():
+    """Degenerate case: only one node, the depot itself.
+    The route is just 0 -> 0 with distance 0."""
+    distance_matrix = [[0]]
+    solver = ORToolsSolver(distance_matrix)
+    solution = solver.solve(time_limit_seconds=1)
+    assert solution[0] == [0, 0]
+    assert solution[1] == 0
