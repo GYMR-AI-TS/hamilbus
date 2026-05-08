@@ -4,19 +4,16 @@
 import time
 import numpy as np
 from hamilbus.solvers.base_solver import BaseSolver
-from ortools.constraint_solver import routing_enums_pb2
-from ortools.constraint_solver import pywrapcp
-
-
-# faire un truc pour mettre la node de départ comme input avec un nom/id d'arret
+from ortools.constraint_solver import routing_enums_pb2, pywrapcp
 
 
 class ORToolsSolver(BaseSolver):
+    """Implements Google's OR-Tools TSP solver on a given distance matrix."""
     def __init__(self, distance_matrix: np.ndarray, time_limit_seconds: int = 30):
-        self.distance_matrix = self._transform_distance_matrix(distance_matrix)
+        self.distance_matrix = self._preprocess_distance_matrix(distance_matrix)
         self.time_limit_seconds = time_limit_seconds
 
-    def _transform_distance_matrix(self, distance_matrix):
+    def _preprocess_distance_matrix(self, distance_matrix):
         """Ensures the graph we're solving on is connected and the distance matrix only contains integers."""
         # Count reachable nodes for each node (non-inf values)
         reachable_counts = np.sum(~np.isinf(distance_matrix), axis=1)
