@@ -15,7 +15,8 @@ class PathReconstructor:
         self.graph = graph
         self.stops_index_to_id = stops_index_to_id
         self.path_matrix = path_matrix
-        self.ids_to_stops = {stop.id: stop for stop in self.graph.get_stops()}
+        if self.graph:
+            self.ids_to_stops = {stop.id: stop for stop in self.graph.get_stops()}
 
     def convert_indices_to_ids(self, solution: list[int]) -> list[str]:
         """Convert the solution as a list of stops indices in the matrix (given by the solver),
