@@ -64,7 +64,8 @@ hamilbus run --solver or_tools --save-matrix --save-solution ./results/my_soluti
 
 ### `hamilbus solve` — Solver only
 
-Runs one or more solvers on a pre-computed distance matrix. No graph or matrix computation. Exemples :
+Runs one or more solvers on a pre-computed distance matrix. No graph or matrix computation. 
+Optionally launch the server to visualize the solutions. Exemples :
 
 ```bash
 hamilbus solve --matrix ./results/matrix.npy
