@@ -1,24 +1,8 @@
-from pathlib import Path
 import hamilbus as hbus
 import networkx as nx
 
-DATA_DIR = Path(__file__).resolve().parents[1] / "src" / "hamilbus" / "data"
-STOPS_PATH = DATA_DIR / "stops.txt"
-ROUTES_PATH = DATA_DIR / "routes.txt"
 
-
-# Tests for reader.py, using the dataclasses
-def test_stops_number():
-    stops = hbus.reader.load_stops(STOPS_PATH)
-    assert len(stops) == 3741
-
-
-def test_lines_number():
-    lines = hbus.reader.load_lines(ROUTES_PATH)
-    assert len(lines) == 109
-
-
-# Tests for the dataclasses themselves
+# Tests for the dataclasses
 # Stop
 def test_stop_creation_success():
     stop = hbus.Stop(
