@@ -21,7 +21,7 @@ class Settings:
     # Paths
     gtfs_folder: Path = Path("./data")
     graph: Path | None = None
-    matrix: Path | None = None
+    matrix: Path | None = Path("./results/distance_matrix.npy")
     solution: list[Path] | None = None
     output_dir: Path = Path("./results")
     # Parameters
@@ -138,13 +138,3 @@ def _parse_start(value: list[str] | str | None) -> list[int] | str | None:
     if value == ["all"] or value == "all":
         return "all"
     return [int(v) for v in value]
-
-
-def resolve_save_path(
-    setting: bool | Path, default_dir: Path, filename: str
-) -> Path | None:
-    if setting is False:
-        return None
-    if setting is True:
-        return default_dir / filename
-    return setting

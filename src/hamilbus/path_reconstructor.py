@@ -8,8 +8,8 @@ from hamilbus.datamodels import Line, BusNetworkGraph
 class PathReconstructor:
     def __init__(
         self,
-        graph: BusNetworkGraph,
         stops_index_to_id: dict[int, str],
+        graph: BusNetworkGraph = None,
         path_matrix: np.ndarray = None,
     ):
         self.graph = graph
