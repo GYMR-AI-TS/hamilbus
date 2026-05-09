@@ -88,7 +88,7 @@ def run_solver(settings: Settings):
     else: 
         # Graph needed for display and solution line creation
         if settings.graph:
-            graph = nx.read_graphml("graph.graphml")
+            graph = nx.read_graphml(settings.graph)
         else:
             stops, lines, trips_by_lines, stops_by_trips = reader.load_gtfs(settings.gtfs_folder)
             graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips)
@@ -120,4 +120,63 @@ def run_solver(settings: Settings):
 
 
 def run_pipeline(settings: Settings):
-    pass
+    """Runs the full pipeline from raw GTFS data to solutions. 
+    Optionally launch the server to visualize the solutions. Available options :
+    --gtfs-folder, --graph, --ignored-lines, --distance-method, --save-matrix,
+    --solver, --result-type, --start, --complete-graph, --save-solution, --serve"""
+    if settings.graph:
+        graph = nx.read_graphml(settings.graph)
+    else:
+        stops, lines, trips_by_lines, stops_by_trips = reader.load_gtfs(settings.gtfs_folder)
+        graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips)
+        graph_builder.merge_stops()
+        graph = graph_builder.build_graph()
+    # TODO : handle ignored-lines
+
+    # TODO : handle distance-method
+    distance_matrix, path_matrix, stops_index_to_id = compute_distance_matrix(graph)
+    save_matrix_path = resolve_save_path(settings.save_matrix, settings.output_dir)
+    # this works if a folder path was passed
+    # TODO : handle case where a full path is passed : ./custom_folder/matrix.npy
+    # Contrary to save-solution, we have multiple things to save so a folder is necessary
+    if save_matrix_path:
+        np.save(save_matrix_path / "path_matrix.npy", path_matrix)
+        np.save(save_matrix_path / "distance_matrix.npy", distance_matrix)
+        with open(save_matrix_path / "stop_index_to_id.json", "w", encoding="utf-8") as f:
+            json.dump({str(k): v for k, v in stops_index_to_id.items()}, f, indent=2)
+
+    # TODO : handle different result_type and start
+    solutions = []
+    for solver_name in settings.solver:
+        solver = solvers[solver_name](distance_matrix)
+        solution = solver.solve(time_limit_seconds=120)
+        # TODO : add time_limit as a parameter
+        solutions.append(solution)
+    
+    if not settings.serve:
+        if settings.complete_graph:
+            reconstructor = PathReconstructor(stops_index_to_id)
+            solutions = [reconstructor.convert_indices_to_ids(solution) for solution in solutions]
+        else :
+            reconstructor = PathReconstructor(stops_index_to_id, path_matrix)
+            solutions = [reconstructor.reconstruct_sparse_path(solution) for solution in solutions]
+    else: 
+        if settings.complete_graph:
+            reconstructor = PathReconstructor(stops_index_to_id, graph)
+            solutions = [reconstructor.convert_indices_to_ids(solution) for solution in solutions]
+            for solution in solutions:
+                reconstructor.add_solution_to_graph(solution, reconstruct=False)
+        else :
+            reconstructor = PathReconstructor(stops_index_to_id, graph, path_matrix)
+            solutions = [reconstructor.reconstruct_sparse_path(solution) for solution in solutions]
+            for solution in solutions:
+                reconstructor.add_solution_to_graph(solution, reconstruct=True)
+    
+        set_graph_network(graph)
+        run_server(host="127.0.0.1", port=3000)
+    
+    save_solution_path = resolve_save_path(settings.save_solution, settings.output_dir)
+    if save_solution_path:
+        for num, solution in enumerate(solutions):
+            with open(save_solution_path / f"solution_{num}.json", "w", encoding="utf-8") as f:
+                json.dump(solution, f, indent=2)

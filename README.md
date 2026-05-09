@@ -37,7 +37,7 @@ Any setting in the config file can be overridden by passing the corresponding CL
 
 ### `hamilbus run` — Full pipeline
 
-Runs everything from raw GTFS data to a solution. Exemples :
+Runs the full pipeline from raw GTFS data to a solution. Examples :
 
 ```bash
 hamilbus run
@@ -65,7 +65,7 @@ hamilbus run --solver or_tools --save-matrix --save-solution ./results/my_soluti
 ### `hamilbus solve` — Solver only
 
 Runs one or more solvers on a pre-computed distance matrix. No graph or matrix computation. 
-Optionally launch the server to visualize the solutions. Exemples :
+Optionally launch the server to visualize the solutions. Examples :
 
 ```bash
 hamilbus solve --matrix ./results/matrix.npy
@@ -87,7 +87,7 @@ hamilbus solve --matrix ./results/matrix.npy --result-type path --start all --sa
 
 ### `hamilbus serve` — Visualisation server
 
-Launches the server to visualise the network and optionally overlay saved solutions. No computation apart from optionally creating the graph. Exemples :
+Launches the server to visualise the network and optionally overlay saved solutions. No computation apart from optionally creating the graph. Examples :
 
 ```bash
 hamilbus serve
