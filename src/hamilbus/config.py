@@ -45,7 +45,9 @@ class Settings:
         s = cls()
 
         # Override with config file
-        resolved_config = config_path if config_path is not None else DEFAULT_CONFIG_PATH
+        resolved_config = (
+            config_path if config_path is not None else DEFAULT_CONFIG_PATH
+        )
         if resolved_config.exists():
             with open(resolved_config, "rb") as f:
                 toml_data = tomllib.load(f)

@@ -68,7 +68,7 @@ def main():
         config_path=args.config,  # None if --config wasn't passed
         cli_overrides=vars(args),  # The full argparse namespace as a dict
     )
-    dispatch(args.command, settings)  
+    dispatch(args.command, settings)
 
 
 if __name__ == "__main__":
