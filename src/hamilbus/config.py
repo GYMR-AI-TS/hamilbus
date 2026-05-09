@@ -22,7 +22,7 @@ class Settings:
     gtfs_folder: Path = Path("./data")
     graph: Path | None = None
     matrix: Path | None = None
-    solution: Path | None = None
+    solution: list[Path] | None = None
     output_dir: Path = Path("./results")
     # Parameters
     # None are implemented yet except "complete_graph" and "serve"
