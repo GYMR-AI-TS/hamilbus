@@ -7,9 +7,8 @@ from hamilbus.graph_builder import GraphBuilder
 from hamilbus.web import run_server, set_graph_network
 from hamilbus.solvers.or_tools_solver import ORToolsSolver
 from hamilbus.distance_matrix import compute_distance_matrix
-from hamilbus.pipeline import serve, run_pipeline, run_solver
 from hamilbus.pipeline import serve, run_solver, run_pipeline
-from hamilbus.config import Settings, load_settings
+from hamilbus.config import Settings
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -83,7 +82,7 @@ def dispatch(command: str, settings: Settings) -> None:
 
 def main():
     args = build_parser().parse_args()
-    settings = load_settings(
+    settings = Settings.load(
         config_path=args.config,  # None if --config wasn't passed
         cli_overrides=vars(args),  # The full argparse namespace as a dict
     )

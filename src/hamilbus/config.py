@@ -39,22 +39,22 @@ class Settings:
     save_matrix: bool | Path = False
     save_solution: bool | Path = False
 
+    @classmethod
+    def load(cls, config_path: Path | None, cli_overrides: dict = {}) -> Settings:
+        # Start from defaults
+        s = cls()
 
-def load_settings(config_path: Path | None, cli_overrides: dict = {}) -> Settings:
-    # Start from defaults
-    s = Settings()
+        # Override with config file
+        resolved_config = config_path if config_path is not None else DEFAULT_CONFIG_PATH
+        if resolved_config.exists():
+            with open(resolved_config, "rb") as f:
+                toml_data = tomllib.load(f)
+            _apply_toml(s, toml_data)
 
-    # Override with config file
-    resolved_config = config_path if config_path is not None else DEFAULT_CONFIG_PATH
-    if resolved_config.exists():
-        with open(resolved_config, "rb") as f:
-            toml_data = tomllib.load(f)
-        _apply_toml(s, toml_data)
+        # Override with CLI
+        _apply_cli(s, cli_overrides)
 
-    # Override with CLI
-    _apply_cli(s, cli_overrides)
-
-    return s
+        return s
 
 
 def _apply_toml(s: Settings, data: dict) -> None:
