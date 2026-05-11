@@ -15,7 +15,7 @@ class GraphBuilder:
         lines: list[Line] | None,
         trips_by_lines: dict[str, list[str]] | None,
         stops_by_trips: dict[str, list[str]] | None,
-        distance_strategy: str = "geodesic"
+        distance_strategy: str = "geodesic",
     ) -> None:
         if stops is None:
             raise ValueError("'stops' cannot be None; pass a list[Stop].")

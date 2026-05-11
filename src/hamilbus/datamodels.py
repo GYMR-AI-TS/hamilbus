@@ -29,17 +29,16 @@ class Line:
 
 class BusNetworkGraph(nx.MultiGraph):
     """Represents a graph composed of stops connected by edges."""
-    
-    strategies: dict[str, Callable] = {
-        "geodesic":geodesic
-    }
+
+    strategies: dict[str, Callable] = {"geodesic": geodesic}
 
     def __init__(self, distance_strategy: str = "geodesic"):
         super().__init__()
         if distance_strategy not in self.strategies:
             raise ValueError(
                 f"Unknown strategy '{distance_strategy}'."
-                f"Choose from: {list(self.strategies)}")
+                f"Choose from: {list(self.strategies)}"
+            )
         self.distance_strategy = self.strategies[distance_strategy]
 
     def add_stop(self, stop: Stop):

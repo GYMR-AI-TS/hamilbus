@@ -95,7 +95,10 @@ def run_solver(settings: Settings):
     if not settings.serve:
         # No graph needed
         reconstructor = PathReconstructor(stops_index_to_id, path_matrix)
-        solutions = [reconstructor.format_solution(s, reconstruct=settings.complete_graph) for s in solutions]
+        solutions = [
+            reconstructor.format_solution(s, reconstruct=settings.complete_graph)
+            for s in solutions
+        ]
     else:
         # Graph needed for display and solutions line creation
         if settings.graph:
@@ -109,15 +112,20 @@ def run_solver(settings: Settings):
             graph = graph_builder.build_graph()
 
         reconstructor = PathReconstructor(stops_index_to_id, graph, path_matrix)
-        solutions = [reconstructor.format_solution(s, reconstruct=settings.complete_graph) for s in solutions]
+        solutions = [
+            reconstructor.format_solution(s, reconstruct=settings.complete_graph)
+            for s in solutions
+        ]
         for s in solutions:
             reconstructor.add_solution_to_graph(s)
 
         set_graph_network(graph)
         run_server(host="127.0.0.1", port=3000)
         # TODO : add button to close the server (for below code to run)/save solutions from the server
-    
-    save_solutions_path = resolve_save_path(settings.save_solutions, settings.output_dir)
+
+    save_solutions_path = resolve_save_path(
+        settings.save_solutions, settings.output_dir
+    )
     if save_solutions_path:
         for num, solution in enumerate(solutions):
             with open(
@@ -137,7 +145,9 @@ def run_pipeline(settings: Settings):
         stops, lines, trips_by_lines, stops_by_trips = reader.load_gtfs(
             settings.gtfs_folder
         )
-        graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips, settings.distance_method)
+        graph_builder = GraphBuilder(
+            stops, lines, trips_by_lines, stops_by_trips, settings.distance_method
+        )
         graph_builder.merge_stops()
         # TODO : handle ignored-lines
         graph = graph_builder.build_graph()
@@ -160,14 +170,19 @@ def run_pipeline(settings: Settings):
         solutions.append(s)
 
     reconstructor = PathReconstructor(stops_index_to_id, graph, path_matrix)
-    solutions = [reconstructor.format_solution(s, reconstruct=settings.complete_graph) for s in solutions]
+    solutions = [
+        reconstructor.format_solution(s, reconstruct=settings.complete_graph)
+        for s in solutions
+    ]
     if settings.serve:
         for s in solutions:
             reconstructor.add_solution_to_graph(s)
         set_graph_network(graph)
         run_server(host="127.0.0.1", port=3000)
 
-    save_solutions_path = resolve_save_path(settings.save_solutions, settings.output_dir)
+    save_solutions_path = resolve_save_path(
+        settings.save_solutions, settings.output_dir
+    )
     if save_solutions_path:
         for num, solution in enumerate(solutions):
             with open(
