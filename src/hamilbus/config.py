@@ -25,13 +25,14 @@ class Settings:
     solutions: list[Path] | None = None
     output_dir: Path = Path("./results")
     # Parameters
-    # None are implemented yet except "complete_graph" and "serve"
+    # The first 4 are not implemented yet
     ignored_lines: list[str] = field(default_factory=list)
     distance_method: str = "geodesic"
     result_type: ResultType = ResultType.CYCLE
     # start : None = default, "all" = all, list = specific stops
     start: list[int] | str | None = None
     solver: list[str] = field(default_factory=lambda: ["or_tools"])
+    time_limit: int = 60
     complete_graph: bool = False
     serve: bool = False
     # Saving actions
@@ -65,10 +66,10 @@ def _apply_toml(s: Settings, data: dict) -> None:
         s.gtfs_folder = Path(paths["gtfs_folder"])
     if "graph" in paths:
         s.graph = Path(paths["graph"])
-    if "matrix" in paths:
-        s.matrix = Path(paths["matrix"])
-    if "solution" in paths:
-        s.solution = Path(paths["solution"])
+    if "matrices" in paths:
+        s.matrices = Path(paths["matrices"])
+    if "solutions" in paths:
+        s.solutions = Path(paths["solutions"])
     if "output_dir" in paths:
         s.output_dir = Path(paths["output_dir"])
 
@@ -89,15 +90,17 @@ def _apply_toml(s: Settings, data: dict) -> None:
         s.result_type = ResultType(solver["result_type"])
     if "start" in solver:
         s.start = _parse_start(solver["start"])
+    if "time_limit" in solver:
+        s.time_limit = solver["time_limit"]
 
     output = data.get("output", {})
-    if "save_matrix" in output:
-        val = output["save_matrix"]
+    if "save_matrices" in output:
+        val = output["save_matrices"]
         # str → Path, bool stays bool
-        s.save_matrix = Path(val) if isinstance(val, str) else val
-    if "save_solution" in output:
-        val = output["save_solution"]
-        s.save_solution = Path(val) if isinstance(val, str) else val
+        s.save_matrices = Path(val) if isinstance(val, str) else val
+    if "save_solutions" in output:
+        val = output["save_solutions"]
+        s.save_solutions = Path(val) if isinstance(val, str) else val
     if "serve" in output:
         s.serve = output["serve"]
 
@@ -107,10 +110,10 @@ def _apply_cli(s: Settings, cli: dict) -> None:
         s.gtfs_folder = cli["gtfs_folder"]
     if cli.get("graph") is not None:
         s.graph = cli["graph"]
-    if cli.get("matrix") is not None:
-        s.matrix = cli["matrix"]
+    if cli.get("matrices") is not None:
+        s.matrices = cli["matrices"]
     if cli.get("solution") is not None:
-        s.solution = cli["solution"]
+        s.solutions = cli["solutions"]
     if cli.get("ignored_lines") is not None:
         s.ignored_lines = cli["ignored_lines"]
     if cli.get("distance_method") is not None:
@@ -123,13 +126,15 @@ def _apply_cli(s: Settings, cli: dict) -> None:
         s.solver = cli["solver"]
     if cli.get("complete_graph"):  # store_true: False when absent, True when present
         s.complete_graph = True
-    if cli.get("save_matrix") is not None:
-        val = cli["save_matrix"]
+    if cli.get("time_limit"):
+        s.time_limit = cli["time_limit"]
+    if cli.get("save_matrices") is not None:
+        val = cli["save_matrices"]
         # "default" → True, Path → Path
-        s.save_matrix = True if val == "default" else val
-    if cli.get("save_solution") is not None:
-        val = cli["save_solution"]
-        s.save_solution = True if val == "default" else val
+        s.save_matrices = True if val == "default" else val
+    if cli.get("save_solutions") is not None:
+        val = cli["save_solutions"]
+        s.save_solutions = True if val == "default" else val
     if cli.get("serve"):
         s.serve = True
 

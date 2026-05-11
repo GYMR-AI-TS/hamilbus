@@ -75,7 +75,7 @@ solvers = {
 def run_solver(settings: Settings):
     """Runs one or more solvers on a pre-computed distance matrix. No graph or matrix computation.
     Optionally launch the server to visualize the solutions. Available options :
-    --matrices, --solver, --result-type, --start, --complete-graph, --save-solutions, --serve"""
+    --matrices, --solver, --time_limit, --result-type, --start, --complete-graph, --save-solutions, --serve"""
     try:
         distance_matrix = np.load(settings.matrices / "distance_matrix.npy")
         path_matrix = np.load(settings.matrices / "path_matrix.npy")
@@ -89,7 +89,7 @@ def run_solver(settings: Settings):
     solutions = []
     for solver_name in settings.solver:
         solver = solvers[solver_name](distance_matrix)
-        s = solver.solve(time_limit_seconds=120)
+        s = solver.solve(time_limit_seconds=settings.time_limit)
         # TODO : add time_limit as a parameter of hamilbus solve and run
         solutions.append(s)
 
@@ -131,7 +131,7 @@ def run_pipeline(settings: Settings):
     """Runs the full pipeline from raw GTFS data to solutions.
     Optionally launch the server to visualize the solutions. Available options :
     --gtfs-folder, --graph, --ignored-lines, --distance-method, --save-matrices,
-    --solver, --result-type, --start, --complete-graph, --save-solutions, --serve"""
+    --solver, --time-limit, --result-type, --start, --complete-graph, --save-solutions, --serve"""
     if settings.graph:
         graph = nx.read_graphml(settings.graph)
     else:
@@ -158,7 +158,7 @@ def run_pipeline(settings: Settings):
     solutions = []
     for solver_name in settings.solver:
         solver = solvers[solver_name](distance_matrix)
-        s = solver.solve(time_limit_seconds=120)
+        s = solver.solve(time_limit_seconds=settings.time_limit)
         # TODO : add time_limit as a parameter
         solutions.append(s)
 

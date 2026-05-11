@@ -12,19 +12,20 @@ def build_parser() -> argparse.ArgumentParser:
     serve_p = subparsers.add_parser("serve")
     serve_p.add_argument("--gtfs-folder", type=Path)
     serve_p.add_argument("--graph", type=Path)
-    serve_p.add_argument("--solution", type=Path, nargs="+")  # accepts multiple values
+    serve_p.add_argument("--solutions", type=Path, nargs="+")  # accepts multiple values
     serve_p.add_argument("--config", type=Path)
     # hamilbus solve
     solve_p = subparsers.add_parser("solve")
-    solve_p.add_argument("--matrix", type=Path)
+    solve_p.add_argument("--matrices", type=Path)
     solve_p.add_argument("--solver", type=str, nargs="+")
     solve_p.add_argument(
         "--result-type", type=str, choices=["cycle", "path"], default=None
     )
     solve_p.add_argument("--start", nargs="+", type=str)
     solve_p.add_argument("--complete-graph", action="store_true")
+    solve_p.add_argument("--time_limit", type=int)
     solve_p.add_argument(
-        "--save-solution", nargs="?", const="default", default=None, type=Path
+        "--save-solutions", nargs="?", const="default", default=None, type=Path
     )
     solve_p.add_argument("--serve", action="store_true")
     solve_p.add_argument("--config", type=Path)
@@ -35,7 +36,7 @@ def build_parser() -> argparse.ArgumentParser:
     run_p.add_argument("--ignored-lines", nargs="+", type=str)
     run_p.add_argument("--distance-method", type=str)
     run_p.add_argument(
-        "--save-matrix", nargs="?", const="default", default=None, type=Path
+        "--save-matrices", nargs="?", const="default", default=None, type=Path
     )
     run_p.add_argument("--solver", nargs="+")
     run_p.add_argument(
@@ -43,8 +44,9 @@ def build_parser() -> argparse.ArgumentParser:
     )
     run_p.add_argument("--start", nargs="+", type=str)
     run_p.add_argument("--complete-graph", action="store_true")
+    run_p.add_argument("--time_limit", type=int)
     run_p.add_argument(
-        "--save-solution", nargs="?", const="default", default=None, type=Path
+        "--save-solutions", nargs="?", const="default", default=None, type=Path
     )
     run_p.add_argument("--serve", action="store_true")
     run_p.add_argument("--config", type=Path)
