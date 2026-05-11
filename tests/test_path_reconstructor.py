@@ -64,7 +64,7 @@ def test_add_solution_to_graph_complete():
     reconstructor = PathReconstructor(stops_index_to_id, graph)
 
     solution = [3, 1, 2, 4]
-    reconstructor.add_solution_to_graph(solution)
+    reconstructor.add_solution_to_graph(solution, format=True)
     assert graph.has_edge(stops[2].id, stops[0].id)
     assert graph.has_edge(stops[0].id, stops[1].id)
     assert graph.has_edge(stops[1].id, stops[3].id)
@@ -94,7 +94,7 @@ def test_add_solution_to_graph_sparse():
     reconstructor = PathReconstructor(stops_index_to_id, graph, path_matrix)
 
     solution = [2, 0, 3]  # Real path 2, 1, 0, 1, 2, 3
-    reconstructor.add_solution_to_graph(solution, reconstruct=True)
+    reconstructor.add_solution_to_graph(solution, reconstruct=True, format=True)
 
     assert graph.has_edge(stops[0].id, stops[1].id)
     assert graph.has_edge(stops[1].id, stops[2].id)
