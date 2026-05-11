@@ -44,6 +44,7 @@ def serve(settings: Settings):
             settings.gtfs_folder
         )
         graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips)
+        # TODO : no distance_strategy parameter here ?
         graph_builder.merge_stops()
         graph = graph_builder.build_graph()
     stops = graph.get_stops()
@@ -90,7 +91,6 @@ def run_solver(settings: Settings):
     for solver_name in settings.solver:
         solver = solvers[solver_name](distance_matrix)
         s = solver.solve(time_limit_seconds=settings.time_limit)
-        # TODO : add time_limit as a parameter of hamilbus solve and run
         solutions.append(s)
 
     if not settings.serve:
@@ -138,7 +138,7 @@ def run_pipeline(settings: Settings):
         stops, lines, trips_by_lines, stops_by_trips = reader.load_gtfs(
             settings.gtfs_folder
         )
-        graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips)
+        graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips, settings.distance_method)
         graph_builder.merge_stops()
         # TODO : handle ignored-lines
         # TODO : handle distance-method as strategies
@@ -159,7 +159,6 @@ def run_pipeline(settings: Settings):
     for solver_name in settings.solver:
         solver = solvers[solver_name](distance_matrix)
         s = solver.solve(time_limit_seconds=settings.time_limit)
-        # TODO : add time_limit as a parameter
         solutions.append(s)
 
     reconstructor = PathReconstructor(stops_index_to_id, graph, path_matrix)

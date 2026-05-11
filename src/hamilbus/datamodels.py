@@ -2,9 +2,9 @@
 ### Defines the dataclasses for storing stops and lines info
 
 import networkx as nx
-from typing import Optional, List
-from dataclasses import dataclass, field
 from geopy.distance import geodesic
+from dataclasses import dataclass, field
+from typing import Optional, List, Callable
 
 
 @dataclass
@@ -27,12 +27,20 @@ class Line:
     stops: list[Stop] = field(default_factory=list)
 
 
-@dataclass
 class BusNetworkGraph(nx.MultiGraph):
     """Represents a graph composed of stops connected by edges."""
+    
+    strategies: dict[str, Callable] = {
+        "geodesic":geodesic
+    }
 
-    def __init__(self):
+    def __init__(self, distance_strategy: str = "geodesic"):
         super().__init__()
+        if distance_strategy not in self.strategies:
+            raise ValueError(
+                f"Unknown strategy '{distance_strategy}'."
+                f"Choose from: {list(self.strategies)}")
+        self.distance_strategy = self.strategies[distance_strategy]
 
     def add_stop(self, stop: Stop):
         """Adds a stop to the graph."""
@@ -44,7 +52,9 @@ class BusNetworkGraph(nx.MultiGraph):
             stop1.id,
             stop2.id,
             line=line,
-            distance=geodesic((stop1.lat, stop1.lon), (stop2.lat, stop2.lon)).meters,
+            distance=self.distance_strategy(
+                (stop1.lat, stop1.lon), (stop2.lat, stop2.lon)
+            ).meters,
         )
 
     def add_line(self, line: Line):

@@ -15,6 +15,7 @@ class GraphBuilder:
         lines: list[Line] | None,
         trips_by_lines: dict[str, list[str]] | None,
         stops_by_trips: dict[str, list[str]] | None,
+        distance_strategy: str = "geodesic"
     ) -> None:
         if stops is None:
             raise ValueError("'stops' cannot be None; pass a list[Stop].")
@@ -38,6 +39,7 @@ class GraphBuilder:
         self.stops_by_trips = stops_by_trips
         self.merged_stops = None
         self.stop_id_to_centroid = {s.id: s for s in self.stops}
+        self.distance_strategy = distance_strategy
 
     def merge_stops(self, centroid_strategy: bool = True) -> list[Stop]:
         """Merge stops that are parent stations/substations of each others
@@ -94,7 +96,7 @@ class GraphBuilder:
         return merged_stops
 
     def build_graph(self) -> BusNetworkGraph:
-        graph = BusNetworkGraph()
+        graph = BusNetworkGraph(self.distance_strategy)
         for line in tqdm(self.lines, desc="Creating the graph", unit=" lines"):
             for trip_id in self.trips_by_lines.get(line.id, []):
                 trip_stops = self.stops_by_trips.get(trip_id, [])
