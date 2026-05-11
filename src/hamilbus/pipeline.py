@@ -46,17 +46,20 @@ def serve(settings: Settings):
         graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips)
         graph_builder.merge_stops()
         graph = graph_builder.build_graph()
+    stops = graph.get_stops()
+    id_to_stop = {s.id: s for s in stops}
     if settings.solutions:
         # Load already saved solutions and add them to the graph
         for num, solution_path in enumerate(settings.solutions):
             with open(solution_path, encoding="utf-8") as f:
                 solution = json.load(f)
+            solution_stops = [id_to_stop[stop.id] for stop in solution]
             solution_line = Line(
                 id=f"Solution_{num}",
                 name=f"Solution {num}",
                 long_name=f"Solution {num}",
                 color="#0905FC",
-                stops=solution,  # TODO : not sure about saved solutions format ?
+                stops=solution_stops,
             )
             graph.add_line(solution_line)
     # Run the server
@@ -137,9 +140,9 @@ def run_pipeline(settings: Settings):
         )
         graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips)
         graph_builder.merge_stops()
+        # TODO : handle ignored-lines
+        # TODO : handle distance-method as strategies
         graph = graph_builder.build_graph()
-    # TODO : handle ignored-lines
-    # TODO : handle distance-method
 
     distance_matrix, path_matrix, stops_index_to_id = compute_distance_matrix(graph)
     save_matrix_path = resolve_save_path(settings.save_matrices, settings.output_dir)
