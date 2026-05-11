@@ -44,7 +44,6 @@ def serve(settings: Settings):
             settings.gtfs_folder
         )
         graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips)
-        # TODO : no distance_strategy parameter here ?
         graph_builder.merge_stops()
         graph = graph_builder.build_graph()
     stops = graph.get_stops()
@@ -141,7 +140,6 @@ def run_pipeline(settings: Settings):
         graph_builder = GraphBuilder(stops, lines, trips_by_lines, stops_by_trips, settings.distance_method)
         graph_builder.merge_stops()
         # TODO : handle ignored-lines
-        # TODO : handle distance-method as strategies
         graph = graph_builder.build_graph()
 
     distance_matrix, path_matrix, stops_index_to_id = compute_distance_matrix(graph)
