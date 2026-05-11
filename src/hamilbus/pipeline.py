@@ -21,6 +21,13 @@ def resolve_save_path(setting: bool | Path, default_dir: Path) -> Path | None:
         return None
     if setting is True:
         return default_dir
+    # Validate it's a directory, not a file path
+    if setting.suffix:
+        raise ValueError(
+            f"--save-solution or --save-matrices expect a folder path, got '{setting}'. "
+            f"Solutions are saved as solution_0.json, solution_1.json, etc."
+            f"And matrices as distance_matrix.npy, path_matrix.npy and stops_index_to_id.json."
+        )
     return setting
 
 
@@ -66,7 +73,11 @@ def run_solver(settings: Settings):
     """Runs one or more solvers on a pre-computed distance matrix. No graph or matrix computation.
     Optionally launch the server to visualize the solutions. Available options :
     --matrix, --solver, --result-type, --start, --complete-graph, --save-solution, --serve"""
-    distance_matrix = np.load(settings.matrix)
+    try:
+        distance_matrix = np.load(settings.matrix)
+    except Exception as e:
+        print(e)
+        return
     stops_index_to_id = {}
     path_matrix = []
     # TODO : load path_matrix and stops_index_to_id as well
@@ -76,16 +87,15 @@ def run_solver(settings: Settings):
     for solver_name in settings.solver:
         solver = solvers[solver_name](distance_matrix)
         solution = solver.solve(time_limit_seconds=120)
-        # TODO : add time_limit as a parameter
+        # TODO : add time_limit as a parameter of hamilbus solve and run
         solutions.append(solution)
 
     if not settings.serve:
         # No graph needed
+        reconstructor = PathReconstructor(stops_index_to_id, path_matrix)
         if settings.complete_graph:
-            reconstructor = PathReconstructor(stops_index_to_id)
             solutions = [reconstructor.convert_indices_to_ids(s) for s in solutions]
         else:
-            reconstructor = PathReconstructor(stops_index_to_id, path_matrix)
             solutions = [reconstructor.reconstruct_sparse_path(s) for s in solutions]
             # TODO : add an entry point to these two reconstructor functions with reconstruct=True/False directly ?
     else:
@@ -100,13 +110,12 @@ def run_solver(settings: Settings):
             graph_builder.merge_stops()
             graph = graph_builder.build_graph()
 
+        reconstructor = PathReconstructor(stops_index_to_id, graph, path_matrix)
         if settings.complete_graph:
-            reconstructor = PathReconstructor(stops_index_to_id, graph)
             solutions = [reconstructor.convert_indices_to_ids(s) for s in solutions]
             for solution in solutions:
                 reconstructor.add_solution_to_graph(solution, reconstruct=False)
         else:
-            reconstructor = PathReconstructor(stops_index_to_id, graph, path_matrix)
             solutions = [reconstructor.reconstruct_sparse_path(s) for s in solutions]
             for solution in solutions:
                 reconstructor.add_solution_to_graph(solution, reconstruct=True)
@@ -116,8 +125,6 @@ def run_solver(settings: Settings):
 
     # TODO : add button to close the server (for below code to run)/save solutions from the server
     save_solution_path = resolve_save_path(settings.save_solution, settings.output_dir)
-    # this works if a folder path was passed
-    # TODO : handle case where a full path is passed : ./custom_folder/solution.json
     if save_solution_path:
         for num, solution in enumerate(solutions):
             with open(
@@ -145,14 +152,11 @@ def run_pipeline(settings: Settings):
     # TODO : handle distance-method
     distance_matrix, path_matrix, stops_index_to_id = compute_distance_matrix(graph)
     save_matrix_path = resolve_save_path(settings.save_matrix, settings.output_dir)
-    # this works if a folder path was passed
-    # TODO : handle case where a full path is passed : ./custom_folder/matrix.npy
-    # Contrary to save-solution, we have multiple things to save so a folder is necessary
     if save_matrix_path:
         np.save(save_matrix_path / "path_matrix.npy", path_matrix)
         np.save(save_matrix_path / "distance_matrix.npy", distance_matrix)
         with open(
-            save_matrix_path / "stop_index_to_id.json", "w", encoding="utf-8"
+            save_matrix_path / "stops_index_to_id.json", "w", encoding="utf-8"
         ) as f:
             json.dump({str(k): v for k, v in stops_index_to_id.items()}, f, indent=2)
 
