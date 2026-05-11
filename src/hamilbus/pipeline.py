@@ -160,21 +160,10 @@ def run_pipeline(settings: Settings):
         solutions.append(solution)
 
     reconstructor = PathReconstructor(stops_index_to_id, graph, path_matrix)
-    if not settings.serve:
-        if settings.complete_graph:
-            solutions = [reconstructor.convert_indices_to_ids(s) for s in solutions]
-        else:
-            solutions = [reconstructor.reconstruct_sparse_path(s) for s in solutions]
-    else:
-        if settings.complete_graph:
-            solutions = [reconstructor.convert_indices_to_ids(s) for s in solutions]
-            for solution in solutions:
-                reconstructor.add_solution_to_graph(solution, reconstruct=False)
-        else:
-            solutions = [reconstructor.reconstruct_sparse_path(s) for s in solutions]
-            for solution in solutions:
-                reconstructor.add_solution_to_graph(solution, reconstruct=True)
-
+    solutions = [reconstructor.format_solution(s, reconstruct=settings.complete_graph) for s in solutions]
+    if settings.serve:
+        for s in solutions:
+            reconstructor.add_solution_to_graph(s)
         set_graph_network(graph)
         run_server(host="127.0.0.1", port=3000)
 
