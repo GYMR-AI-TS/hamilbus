@@ -93,11 +93,7 @@ def run_solver(settings: Settings):
     if not settings.serve:
         # No graph needed
         reconstructor = PathReconstructor(stops_index_to_id, path_matrix)
-        if settings.complete_graph:
-            solutions = [reconstructor.convert_indices_to_ids(s) for s in solutions]
-        else:
-            solutions = [reconstructor.reconstruct_sparse_path(s) for s in solutions]
-            # TODO : add an entry point to these two reconstructor functions with reconstruct=True/False directly ?
+        solutions = [reconstructor.format_solution(s, reconstruct=settings.complete_graph) for s in solutions]
     else:
         # Graph needed for display and solution line creation
         if settings.graph:
@@ -111,14 +107,9 @@ def run_solver(settings: Settings):
             graph = graph_builder.build_graph()
 
         reconstructor = PathReconstructor(stops_index_to_id, graph, path_matrix)
-        if settings.complete_graph:
-            solutions = [reconstructor.convert_indices_to_ids(s) for s in solutions]
-            for solution in solutions:
-                reconstructor.add_solution_to_graph(solution, reconstruct=False)
-        else:
-            solutions = [reconstructor.reconstruct_sparse_path(s) for s in solutions]
-            for solution in solutions:
-                reconstructor.add_solution_to_graph(solution, reconstruct=True)
+        solutions = [reconstructor.format_solution(s, reconstruct=settings.complete_graph) for s in solutions]
+        for s in solutions:
+            reconstructor.add_solution_to_graph(s)
 
         set_graph_network(graph)
         run_server(host="127.0.0.1", port=3000)
