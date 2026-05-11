@@ -19,14 +19,88 @@ Install the package with development dependencies:
 pip install -e ".[dev]"
 ```
 
-## How to run
+## Usage
+
+hamilbus is run from the command line with one of three subcommands depending on where you want to enter the pipeline.
+
+### Configuration
+
+hamilbus looks for a `config.toml` file in the current directory. Copy the example config and edit it to match your setup:
 
 ```bash
-cd hamilbus
-python -m hamilbus.main
+cp config.toml.example config.toml
 ```
 
-Then open http://127.0.0.1:3000
+Any setting in the config file can be overridden by passing the corresponding CLI flag. CLI flags always win over config file values.
+
+---
+
+### `hamilbus run` — Full pipeline
+
+Runs the full pipeline from raw GTFS data to a solution. Examples :
+
+```bash
+hamilbus run
+hamilbus run --gtfs-folder ./data/naolib
+hamilbus run --solver or_tools nearest_neighbor --save-solution
+hamilbus run --solver or_tools --save-matrix --save-solution ./results/my_solution.json --serve
+```
+
+| Flag | Description |
+|---|---|
+| `--gtfs-folder` | Path to the folder containing GTFS files |
+| `--graph` | Path to a pre-built graph file, skips graph construction |
+| `--ignored-lines` | Line IDs to exclude, e.g. `--ignored-lines L80 L81` |
+| `--distance-method` | Distance calculation method (default: `geodesic`) |
+| `--solver` | One or more solvers to run, e.g. `--solver or_tools nearest_neighbor` |
+| `--result-type` | `cycle` (default) or `path` |
+| `--start` | Starting stop ID(s) for path solving, e.g. `--start 23` or `--start 21 42` or `--start all` |
+| `--complete-graph` | Use complete graph, skip path reconstruction |
+| `--save-matrix` | Save the distance matrix. Omit a path to use `output_dir` |
+| `--save-solution` | Save the solution. Omit a path to use `output_dir` |
+| `--serve` | Launch the visualisation server after solving |
+
+---
+
+### `hamilbus solve` — Solver only
+
+Runs one or more solvers on a pre-computed distance matrix. No graph or matrix computation. 
+Optionally launch the server to visualize the solutions. Examples :
+
+```bash
+hamilbus solve --matrix ./results/matrix.npy
+hamilbus solve --matrix ./results/matrix.npy --solver or_tools nearest_neighbor
+hamilbus solve --matrix ./results/matrix.npy --result-type path --start all --save-solution
+```
+
+| Flag | Description |
+|---|---|
+| `--matrix` | Path to a saved distance matrix file |
+| `--solver` | One or more solvers to run |
+| `--result-type` | `cycle` (default) or `path` |
+| `--start` | Starting stop ID(s) for path solving |
+| `--complete-graph` | Use complete graph, skip path reconstruction |
+| `--save-solution` | Save the solution. Omit a path to use `output_dir` |
+| `--serve` | Launch the visualisation server after solving |
+
+---
+
+### `hamilbus serve` — Visualisation server
+
+Launches the server to visualise the network and optionally overlay saved solutions. No computation apart from optionally creating the graph. Examples :
+
+```bash
+hamilbus serve
+hamilbus serve --graph ./results/graph.pkl
+hamilbus serve --graph ./results/graph.pkl --solution ./results/solution.json
+hamilbus serve --gtfs-folder ./data/naolib --solution ./results/sol1.json ./results/sol2.json
+```
+
+| Flag | Description |
+|---|---|
+| `--gtfs-folder` | Path to GTFS files, used to build the graph if no `--graph` is provided |
+| `--graph` | Path to a pre-built graph file |
+| `--solution` | One or more solution files to overlay on the network |
 
 ### Development Tools
 

@@ -19,6 +19,9 @@ dependencies = [
     "ortools>=9.0",
 ]
 
+[project.scripts]
+hamilbus = "hamilbus.main:main"
+
 [project.optional-dependencies]
 dev = [
     "pytest",

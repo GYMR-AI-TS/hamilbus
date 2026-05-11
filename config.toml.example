@@ -1,0 +1,28 @@
+# hamilbus configuration file
+# Copy this file to hamilbus.toml and edit as needed
+# All values shown are defaults — omit any key to use the default
+
+[paths]
+gtfs_folder = "./data"
+output_dir = "./results"
+# graph = "./results/graph.pkl"         # uncomment to load a pre-built graph
+# matrices = "./results/matrix.pkl"     # uncomment to load a pre-computed matrix
+# solutions = "./results/solution.json" # uncomment to load a pre-saved solution
+
+[data]
+ignored_lines = []  # e.g. ["L80", "L81"] to exclude school transport lines
+
+[graph]
+distance_method = "geodesic"  # only option for now
+complete_graph = false         # if true, skip path reconstruction at the end
+
+[solver]
+solver = ["or_tools"]          # e.g. ["or_tools", "nearest_neighbor"] to compare
+result_type = "cycle"          # "cycle" or "path"
+# start =                      # omit to use default start, "all" to try all, or e.g. [23, 42]
+time_limit = 60                # maximum run time of a solver, in seconds
+
+[output]
+save_matrices = false          # or a folder path: "./matrices". Defaults to output_dir.
+save_solutions = false         # or a folder path: "./solutions". Defaults to output_dir.
+serve = false                  # launch the server after solving
