@@ -21,8 +21,8 @@ class Settings:
     # Paths
     gtfs_folder: Path = Path("./data")
     graph: Path | None = None
-    matrix: Path | None = Path("./results/distance_matrix.npy")
-    solution: list[Path] | None = None
+    matrices: Path | None = Path("./results")
+    solutions: list[Path] | None = None
     output_dir: Path = Path("./results")
     # Parameters
     # None are implemented yet except "complete_graph" and "serve"
@@ -36,8 +36,8 @@ class Settings:
     serve: bool = False
     # Saving actions
     # False = don't save, True = use default output_dir, Path = specific path
-    save_matrix: bool | Path = False
-    save_solution: bool | Path = False
+    save_matrices: bool | Path = False
+    save_solutions: bool | Path = False
 
     @classmethod
     def load(cls, config_path: Path | None, cli_overrides: dict = {}) -> Settings:
